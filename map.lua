@@ -32,7 +32,7 @@ function Map.draw()
 	for y = 1, Map.mapHeight do
 		for x = 1, Map.mapWidth do
 			if Map.mapData[y][x] == 1 then
-				SpriteManager.draw(61, x, y)
+				SpriteManager.draw(61, x * Map.tileSize, y * Map.tileSize)
 				--Graphics.drawTextOnGrid("(" .. x .. ", " .. y .. ")", x, y) 
 			end
 		end

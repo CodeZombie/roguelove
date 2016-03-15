@@ -20,5 +20,6 @@ function SpriteManager.load(filename_)
 end
 
 function SpriteManager.draw(index_, x_, y_)
-	love.graphics.draw(SpriteManager.spritesheet, SpriteManager.quads[index_], ((x_ * Map.tileSize)-(Camera.position.x)) * DRAWSCALE, ((y_ * Map.tileSize) - (Camera.position.y)) * DRAWSCALE, 0, DRAWSCALE, DRAWSCALE)
+	--love.graphics.draw(SpriteManager.spritesheet, SpriteManager.quads[index_], x_, y_, 0, Graphics.drawScale, Graphics.drawScale)
+	love.graphics.draw(SpriteManager.spritesheet, SpriteManager.quads[index_], ((x_)-(Camera.position.x)) * Graphics.drawScale, ((y_) - (Camera.position.y)) * Graphics.drawScale, 0, Graphics.drawScale, Graphics.drawScale)
 end

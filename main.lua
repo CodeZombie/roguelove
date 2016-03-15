@@ -1,4 +1,6 @@
 class = require '30log'
+require 'gamemath'
+require 'gamestate'
 require 'map'
 require 'spriteManager'
 require 'camera'
@@ -7,6 +9,7 @@ require 'object'
 require 'being'
 require 'object'
 require 'npc'
+require 'npcmanager'
 require 'player'
 
 --generate map
@@ -18,9 +21,8 @@ require 'player'
 
 --object will be the class that everything is based around. NPC will be pretty much just like the player, but with ai logic
 
-DRAWSCALE = 2
-TURN = 0 --0 = players turn, 1 = NPC turn
-
+_ACCUMULATOR = 0
+UPDATES_PER_SECOND = 60
 
 function love.load()
 	SpriteManager.load("images/spritesheet.png")
@@ -29,24 +31,79 @@ end
 
 function onCreate()
 	Map.generate()
-	dude = NPC:new(16, 16)
-	player = Player:new(16,16)
+	NPCManager.populate()
+	player = Player:new(24,24)
 	Camera.setObjectToFollow(player)
+	Graphics.disableSmoothing()
+	
+	-----------------------------------------------------------------------
+	-- this is the turn-manager
+	-- it works by starting the players turn
+	-- then it waits for the player to finish their turn
+	-- then it starts the NPCmanager turn
+	-- then it waits for the NPCmanager to finish it's turn, then restarts
+	-----------------------------------------------------------------------
+	GameState.addState(	function()
+							player:startTurn()
+							GameState.advance()
+						end)
+						
+	GameState.addState(	function() 
+							if player.finishedTurn then
+								GameState.advance() 
+							end
+						end)
+						
+	GameState.addState(	function() 
+							NPCManager.startTurn()
+							GameState.advance() 
+						end)
+						
+	GameState.addState(	function() 
+							if NPCManager.finishedTurn then
+								GameState.advance() 
+							end 
+						end)
 end
 
 function love.keypressed(key)
-	if TURN == 0 then
+	if GameState.state == 2 then --if it's the players turn...
 		player:checkInput(key)
+	end
+	
+	if key == "escape" then
+		love.event.push('quit')
+	end
+end
+
+function love.mousepressed(x, y, button, istouch)
+	if GameState.state == 2 then
+		player:checkMouseInput(x, y, button)
 	end
 end
 
 function love.update(dt)
-	Camera.update()
+	_ACCUMULATOR = _ACCUMULATOR + math.ceil(dt*100000)
+	while _ACCUMULATOR >= math.ceil(100000/UPDATES_PER_SECOND) do
+		updateGame()
+		_ACCUMULATOR = _ACCUMULATOR - math.ceil(100000/UPDATES_PER_SECOND)
+	end
+end
+
+function updateGame()
+	player:update()
+	--if GameState.state == 4 then
+		NPCManager.update()
+	--end
+	Camera.update()	
+	GameState.update()
 end
 
 function love.draw()
-	love.graphics.setDefaultFilter( "nearest" , "nearest" )
+	--(Camera.objectToFollow.position.x) - (400/Graphics.drawScale) + (Map.tileSize/2)
 	Map.draw()
-	dude:draw()
+	NPCManager.draw()
 	player:draw()
+	--love.graphics.print("Player moves: " .. string.format("%i",player.moves), 16, 32) -- draw bools onscren
+	--love.graphics.print("NPC moves: " .. string.format("%i",NPCManager.NPCs[1].moves), 16, 48) -- draw bools onscren
 end
