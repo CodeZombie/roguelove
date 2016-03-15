@@ -1,25 +1,29 @@
-SpriteManager = {
+SpriteManager = class{
 	spritesheet = nil,
 	quads = {}
 }
 
-function SpriteManager.load(filename_)
-	SpriteManager.spritesheet = love.graphics.newImage(filename_)
-	SpriteManager.spritesheet:setFilter( "nearest", "nearest" )
-	local numberOfQuadsWidth = math.floor(SpriteManager.spritesheet:getWidth() / Map.tileSize) 
-	local numberOfQuadsHeight = math.floor(SpriteManager.spritesheet:getHeight() / Map.tileSize)
+function SpriteManager:__init()
+
+end
+
+function SpriteManager:loadSpriteSheet(filename_, tileSize_)
+	self.spritesheet = love.graphics.newImage(filename_)
+	self.spritesheet:setFilter( "nearest", "nearest" )
+	local numberOfQuadsWidth = math.floor(self.spritesheet:getWidth() / tileSize_) 
+	local numberOfQuadsHeight = math.floor(self.spritesheet:getHeight() / tileSize_)
 	
 	for y = 0, numberOfQuadsHeight do
 		for x = 0, numberOfQuadsWidth do
-			table.insert(SpriteManager.quads, love.graphics.newQuad(x*Map.tileSize, y*Map.tileSize, Map.tileSize, Map.tileSize, SpriteManager.spritesheet:getDimensions()))
+			table.insert(self.quads, love.graphics.newQuad(x * tileSize_, y * tileSize_, tileSize_, tileSize_, self.spritesheet:getDimensions()))
 		end
 	end
 	
-	
-	--generate indexes and offsets and all that
+	print(table.getn(self.quads))
+
 end
 
-function SpriteManager.draw(index_, x_, y_)
+function SpriteManager:draw(index_, x_, y_, camera_)
 	--love.graphics.draw(SpriteManager.spritesheet, SpriteManager.quads[index_], x_, y_, 0, Graphics.drawScale, Graphics.drawScale)
-	love.graphics.draw(SpriteManager.spritesheet, SpriteManager.quads[index_], ((x_)-(Camera.position.x)) * Graphics.drawScale, ((y_) - (Camera.position.y)) * Graphics.drawScale, 0, Graphics.drawScale, Graphics.drawScale)
+	love.graphics.draw(self.spritesheet, self.quads[index_], ((x_)-(camera_.position.x)) * Graphics.drawScale, ((y_) - (camera_.position.y)) * Graphics.drawScale, 0, Graphics.drawScale, Graphics.drawScale)
 end

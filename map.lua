@@ -1,38 +1,41 @@
-Map = {
+Map = class{
 	mapData = {},
 	mapWidth = 32,
 	mapHeight = 32,
 	tileSize = 16
 }
 
-function Map.generate()
+function Map:__init(w_, h_)
 	
-	for y = 1, Map.mapHeight do
-		table.insert(Map.mapData, {})
+	self.mapWidth = w_
+	self.mapHeight = h_
+
+	for y = 1, self.mapHeight do
+		table.insert(self.mapData, {})
 		--Map.mapData[y] = {}
-		for x = 1, Map.mapWidth do
+		for x = 1, self.mapWidth do
 			if love.math.random() >= .75 then
-				table.insert(Map.mapData[y], 1)
+				table.insert(self.mapData[y], 1)
 				--Map.mapData[y][x] = 1
 			else 
-				table.insert(Map.mapData[y], 0)
+				table.insert(self.mapData[y], 0)
 				--Map.mapData[y][x] = 0
 			end
 		end
 	end
 end
 
-function Map.setSize(w_, h_)
-	Map.mapWidth = w_
-	Map.mapHeight = h_
+function Map:setSize(w_, h_)
+	self.mapWidth = w_
+	self.mapHeight = h_
 end
 
-function Map.draw()
+function Map:draw(spriteManager_, camera_)
 	--draw the map
-	for y = 1, Map.mapHeight do
-		for x = 1, Map.mapWidth do
-			if Map.mapData[y][x] == 1 then
-				SpriteManager.draw(61, x * Map.tileSize, y * Map.tileSize)
+	for y = 1, self.mapHeight do
+		for x = 1, self.mapWidth do
+			if self.mapData[y][x] == 1 then
+				spriteManager_:draw(61, x * self.tileSize, y * self.tileSize, camera_)
 				--Graphics.drawTextOnGrid("(" .. x .. ", " .. y .. ")", x, y) 
 			end
 		end

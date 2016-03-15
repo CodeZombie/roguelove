@@ -1,27 +1,26 @@
-Camera = {
-	position = {},
+Camera = class{
+	position = {x=0,y=0},
 	objectToFollow = nil
 }
 
-function Camera.update()
-	if Camera.objectToFollow ~= nil then
-		local tempx = (Camera.objectToFollow.position.x) - ((Graphics.windowWidth/2)/Graphics.drawScale) + (Map.tileSize/2)
-		local tempy = (Camera.objectToFollow.position.y) - ((Graphics.windowHeight/2)/Graphics.drawScale) + (Map.tileSize/2)
-		if tempx > Map.tileSize then
-			Camera.position.x = tempx
-		else
-			Camera.position.x = Map.tileSize
-		end
-		
-		if tempy > Map.tileSize then
-			Camera.position.y = tempy
-		else
-			Camera.position.y = Map.tileSize
-		end
-	end
+function Camera:__init(object_)
+	self.objectToFollow = object_
 end
 
-function Camera.setObjectToFollow(o_)
-	Camera.objectToFollow = o_
-	Camera.update()
+function Camera:update(map_)
+	if self.objectToFollow ~= nil then
+		local tempx = (self.objectToFollow.position.x) - ((Graphics.windowWidth/2)/Graphics.drawScale) + (map_.tileSize/2)
+		local tempy = (self.objectToFollow.position.y) - ((Graphics.windowHeight/2)/Graphics.drawScale) + (map_.tileSize/2)
+		if tempx > map_.tileSize then
+			self.position.x = tempx
+		else
+			self.position.x = map_.tileSize
+		end
+		
+		if tempy > map_.tileSize then
+			self.position.y = tempy
+		else
+			self.position.y = map_.tileSize
+		end
+	end
 end

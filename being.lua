@@ -27,3 +27,7 @@ function Being:onMoveFailed()
 	self.moves = self.moves + 1
 end
 	
+	
+function Being:draw(spriteManager_, camera_)
+	Being.super.draw(self, spriteManager_, camera_)
+end

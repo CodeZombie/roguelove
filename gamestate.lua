@@ -1,20 +1,24 @@
-GameState = {
+GameState = class{
 	state = 1,
 	functions = {}
 }
 
-function GameState.advance()
-	GameState.state = GameState.state + 1
+function GameState:__init()
+
+end
+
+function GameState:advance()
+	self.state = self.state + 1
 	
-	if GameState.state > table.getn(GameState.functions) then
-		GameState.state = 1
+	if self.state > table.getn(self.functions) then
+		self.state = 1
 	end
 end
 
-function GameState.update()
-	GameState.functions[GameState.state]()
+function GameState:update()
+	self.functions[self.state]()
 end
 
-function GameState.addState(f_)
-	table.insert(GameState.functions, f_)
+function GameState:addState(f_)
+	table.insert(self.functions, f_)
 end

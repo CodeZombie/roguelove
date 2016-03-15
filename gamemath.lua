@@ -11,3 +11,8 @@ function GameMath.pointInTriangle(point, tri1, tri2, tri3)
 	
 	return ((b1 == b2) and (b2 == b3))
 end
+
+function GameMath.round(num, idp)
+  local mult = 10^(idp or 0)
+  return math.floor(num * mult + 0.5) / mult
+end
