@@ -8,22 +8,26 @@ GameScene = Scene:extends{
 }
 
 function GameScene:__init()
-
+	love.graphics.setBackgroundColor( 0,0,0 )
 	self.spriteManager = SpriteManager:new()
-	self.map = Map:new(32, 32)
-
+	self.map = Map:new(128, 96)
+	self.map:newGen()
+	self.map:detail()
+	print(table.getn(self.map.rooms))
 	self.spriteManager:loadSpriteSheet("images/spritesheet.png", self.map.tileSize)
 	
 	self.gameState = GameState:new()
 	
 	self.npcManager = NPCManager:new()
 	
-	self.player = Player:new(24,24)
+	self.player = Player:new(64,48)
 	self.camera = Camera:new(self.player)
 	--GameState.init()
 	--Map.generate()
 	--NPCManager.populate()
 	--GameScene.player = Player:new(24,24)
+	
+	
 	
 	--Camera.setObjectToFollow(GameScene.player)
 

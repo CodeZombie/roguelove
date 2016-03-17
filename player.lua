@@ -55,8 +55,18 @@ function Player:onMoveFailed()
 	Player.super.onMoveFailed(self)
 	self.moves = self.moves - 1
 end
+
+function Player:onMoved()
+	Player.super.onMoved(self)
+end
 	
+	
+function Player:move(direction_, map_)
+	Player.super.move(self, direction_, map_)
+	
+end
 	
 function Player:draw(spriteManager_, camera_)
 	Player.super.draw(self, spriteManager_, camera_)
+	
 end

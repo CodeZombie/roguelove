@@ -4,7 +4,7 @@ Object = class{
 	objectType = "generic",
 	spriteIndex = 1,
 	animationState = 0, --1 = Walking. 
-	speed = 2
+	speed = 4 --4 is quick enough as to not hold the player up if they wanna move quickly, but also slow enough to show the animation
 }
 
 function Object:__init(x,y)
@@ -33,7 +33,6 @@ end
 function Object:move(direction_, map_)
 	local playerTileX = math.floor(self.position.x / map_.tileSize)
 	local playerTileY = math.floor(self.position.y / map_.tileSize)
-	
 	if self.animationState == 0 then
 		if direction_ == "up" then
 			if map_.mapData[playerTileY - 1] ~= nil and map_.mapData[playerTileY - 1][playerTileX] == 0 then
