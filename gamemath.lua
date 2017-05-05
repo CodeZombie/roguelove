@@ -17,18 +17,6 @@ function GameMath.round(num, idp)
   return math.floor(num * mult + 0.5) / mult
 end
 
-function GameMath.max(int1, int2)
-	if int1 > int2 then
-		return int1
-	else
-		return int2
-	end
-end
-
-function GameMath.min(int1, int2)
-	if int1 < int2 then
-		return int1
-	else
-		return int2
-	end
+function GameMath.sign(x_)
+	return (x_<0 and -1) or 1
 end

@@ -1,104 +1,92 @@
 Object = class{
+	id = 0,
 	position = {x=0, y=0},
-	destinationPosition = {x=0, y=0},
-	objectType = "generic",
+	velocity = {x=0, y=0},
+	maxVelocity = {x=3, y=3},
+	solidGroup = {},
+	friction = .5,
+	type = "gameobject",
+	subtype = "game_generic",
+	reactsToCollision = false,
 	spriteIndex = 1,
-	animationState = 0, --1 = Walking. 
-	speed = 4 --4 is quick enough as to not hold the player up if they wanna move quickly, but also slow enough to show the animation
+	size = {w=16, h=16}
 }
 
-function Object:__init(x,y)
-	self.position.x, self.position.y = x * Map.tileSize, y * Map.tileSize
-	self.destinationPosition.x = self.position.x
-	self.destinationPosition.y = self.position.y
+function Object:__init(x_, y_)
+	self.position.x, self.position.y = x_, y_
+
 end
 
-function Object:setObjectType(t)
-	self.objectType = t
+function Object:setObjectType(t_)
+	self.objectType = t_
 end
 
 function Object:setSpriteIndex(s_)
 	self.spriteIndex = s_
 end
 
-function Object:onMoved()
-	--automatically called after a succesful move
+function Object:keyPress(key_)
+
 end
 
-function Object:onMoveFailed()
-	--automatically called if the object fails to move in the desired direction
+function Object:onCollision(other_)
 end
 
-
-function Object:move(direction_, map_)
-	local playerTileX = math.floor(self.position.x / map_.tileSize)
-	local playerTileY = math.floor(self.position.y / map_.tileSize)
-	if self.animationState == 0 then
-		if direction_ == "up" then
-			if map_.mapData[playerTileY - 1] ~= nil and map_.mapData[playerTileY - 1][playerTileX] == 0 then
-				self.destinationPosition.y = math.floor(self.position.y - map_.tileSize)
-				self.animationState = 1
-			else
-				self:onMoveFailed()
-			end
-		elseif direction_ == "down" then
-			if map_.mapData[playerTileY + 1] ~= nil and map_.mapData[playerTileY + 1][playerTileX] == 0 and playerTileY <= map_.mapHeight * map_.tileSize then
-				self.destinationPosition.y = math.floor(self.position.y + map_.tileSize)
-				self.animationState = 1
-			else
-				self:onMoveFailed()
-			end
-		elseif direction_ == "left" then
-			if map_.mapData[playerTileY][playerTileX - 1] ~= nil and map_.mapData[playerTileY][playerTileX - 1] == 0 then
-				self.destinationPosition.x = math.floor(self.position.x - map_.tileSize)
-				self.animationState = 1
-			else
-				self:onMoveFailed()
-			end
-		elseif direction_ == "right" then
-			if map_.mapData[playerTileY][playerTileX + 1] ~= nil and map_.mapData[playerTileY][playerTileX + 1] == 0 and playerTileX <= map_.mapWidth * map_.tileSize then
-				self.destinationPosition.x = math.floor(self.position.x + map_.tileSize)
-				self.animationState = 1
-			else
-				self:onMoveFailed()
-			end
+function Object:checkCollision(other_)
+	if 	self.position.x < other_.position.x + other_.size.w and
+		self.position.x + self.size.w > other_.position.x and
+		self.position.y < other_.position.y + other_.size.h and
+		self.position.y + self.size.h > other_.position.y then
+			return true
 		end
+		return false
+end
+
+function Object:addVelocity(x_, y_)
+	if math.abs(self.velocity.x) < math.abs(self.maxVelocity.x) then
+		self.velocity.x = self.velocity.x + x_
+	else
+		self.velocity.x = self.maxVelocity.x * GameMath.sign(self.velocity.x)
 	end
+
+	if math.abs(self.velocity.y) < math.abs(self.maxVelocity.y) then
+		self.velocity.y = self.velocity.y + y_
+	else
+		self.velocity.y = self.maxVelocity.y * GameMath.sign(self.velocity.y)
+	end
+
 end
 
 function Object:draw(spriteManager_, camera_)
-	spriteManager_:draw(self.spriteIndex, self.position.x , self.position.y, camera_)
-	--Graphics.drawTextOnGrid("(" .. self.position.x .. ", " .. self.position.y .. ")", self.position.x, self.position.y) 
+	spriteManager_:draw(self.spriteIndex, self.position.x , self.position.y, self.size.w, self.size.h, camera_)
+	--Graphics.drawTextOnGrid("(" .. self.position.x .. ", " .. self.position.y .. ")", self.position.x, self.position.y)
 end
 
-function Object:update()
+function Object:update(objectManager_)
 	--generic object update logic
-	if self.animationState ~= 0 then
-		self:animate()
-	end
-end
 
-function Object:animate()
-	if self.animationState == 1 then
-		if math.abs(self.position.x - self.destinationPosition.x) >= self.speed or math.abs(self.position.y - self.destinationPosition.y) >= self.speed then
-			if self.position.x > self.destinationPosition.x then
-				self.position.x = self.position.x - math.ceil((self.speed) * (math.abs(self.position.x - self.destinationPosition.x)/8))
-			elseif self.position.x < self.destinationPosition.x then
-				self.position.x = self.position.x + math.ceil((self.speed) * (math.abs(self.position.x - self.destinationPosition.x)/8))
-			end
-			
-			if self.position.y > self.destinationPosition.y then
-				self.position.y = self.position.y - math.ceil((self.speed) * (math.abs(self.position.y - self.destinationPosition.y)/8))
-			elseif self.position.y < self.destinationPosition.y then
-				self.position.y = self.position.y + math.ceil((self.speed) * (math.abs(self.position.y - self.destinationPosition.y)/8))
-			end
-		else
-			self.position.x = self.destinationPosition.x
-			self.position.y = self.destinationPosition.y
-			self.animationState = 0
-			self:onMoved()
+	--apply friction
+	if self.velocity.x ~= 0 then
+		self.velocity.x = self.velocity.x - (self.friction * GameMath.sign(self.velocity.x))
+	end
+	if self.velocity.y ~= 0 then
+		self.velocity.y = self.velocity.y - (self.friction * GameMath.sign(self.velocity.y))
+	end
+
+
+	--apply velocity
+	self.position.x = math.floor(self.position.x + self.velocity.x)
+	--correct movement if collision with any object of the solidGroup
+	if self.velocity.x ~= 0 then
+		while objectManager_:isColliding(self, self.solidGroup) do
+			self.position.x = math.floor(self.position.x - GameMath.sign(self.velocity.x))
 		end
 	end
-	--loops until it returns 0. Each loop, it changes its keyframe, and is redrawn by love.draw()
-	--a special flag will be used in the object members to determine if an animation is to be started.
+
+	self.position.y = math.floor(self.position.y + self.velocity.y)
+	if self.velocity.y ~= 0 then
+		while objectManager_:isColliding(self, self.solidGroup) do
+			self.position.y = math.floor(self.position.y - GameMath.sign(self.velocity.y))
+		end
+	end
 end

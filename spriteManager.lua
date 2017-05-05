@@ -1,13 +1,15 @@
 SpriteManager = class{
 	spritesheet = nil,
-	quads = {}
+	quads = {},
+	tileSize = 16
 }
 
 function SpriteManager:__init()
 
 end
 
-function SpriteManager:loadSpriteSheet(filename_, tileSize_)
+function SpriteManager:loadSpriteSheet(filename_, tileSize_)	
+	self.tileSize = tileSize_
 	self.spritesheet = love.graphics.newImage(filename_)
 	self.spritesheet:setFilter( "nearest", "nearest" )
 	local numberOfQuadsWidth = math.floor(self.spritesheet:getWidth() / tileSize_) 
@@ -23,7 +25,7 @@ function SpriteManager:loadSpriteSheet(filename_, tileSize_)
 
 end
 
-function SpriteManager:draw(index_, x_, y_, camera_)
+function SpriteManager:draw(index_, x_, y_, w_, h_, camera_)
 	--love.graphics.draw(SpriteManager.spritesheet, SpriteManager.quads[index_], x_, y_, 0, Graphics.drawScale, Graphics.drawScale)
-	love.graphics.draw(self.spritesheet, self.quads[index_], ((x_)-(camera_.position.x)) * Graphics.drawScale, ((y_) - (camera_.position.y)) * Graphics.drawScale, 0, Graphics.drawScale, Graphics.drawScale)
+	love.graphics.draw(self.spritesheet, self.quads[index_], ((x_)-(camera_.position.x)) * Graphics.drawScale, ((y_) - (camera_.position.y)) * Graphics.drawScale, 0, Graphics.drawScale * (w_ / self.tileSize), Graphics.drawScale * (h_ / self.tileSize))
 end

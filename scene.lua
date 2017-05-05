@@ -1,4 +1,11 @@
 Scene = class{
+  objectManager = nil,
+  interfaceManager = nil,
+  gameState = nil,
+  camera = nil,
+  spriteManager = nil,
+  mapWidth = 512,
+  mapHeight = 512
 }
 
 function Scene:__init()

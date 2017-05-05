@@ -11,3 +11,9 @@ March 16th:
 
 March 17th: 
 	Clean up the mapgen functions. Restore order to this horrible file
+
+May 2017:
+	Changed Project direction entirely.
+	No longer a turn based engine.
+	interface manager started.
+	Many other small changes.

@@ -1,0 +1,5 @@
+The game will be a sort of reverse dungeon crawler.
+The player will take control of a gang of bad guys, creatures and "enemies", which can be spawned to attack the "hero" who is trying 
+to traverse the dungeon.
+
+The player has a queue of characters, which can be spawned one at a time
