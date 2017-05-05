@@ -12,6 +12,7 @@ require 'interfacecontainer'
 require 'object'
 require 'objects/npc'
 require 'objects/player'
+require 'objects/wall'
 
 require 'scene'
 require 'scenes/gamescene'

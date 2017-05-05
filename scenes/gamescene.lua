@@ -22,9 +22,7 @@ function GameScene:__init()
 
 	--fill objectManager up with walls:
 	for n=1, 128 do
-		local wall = self.objectManager:addObject(NPC:new(16 * math.floor((love.math.random()*self.mapWidth)/16), 16 * math.floor((love.math.random()*self.mapWidth)/16)))
-		wall:setSpriteIndex(61)
-		wall:setObjectType("wall")
+		self.objectManager:addObject(Wall:new(16 * math.floor((love.math.random()*self.mapWidth)/16), 16 * math.floor((love.math.random()*self.mapWidth)/16)))
 	end
 
 

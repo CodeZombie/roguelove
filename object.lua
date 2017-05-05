@@ -5,8 +5,7 @@ Object = class{
 	maxVelocity = {x=3, y=3},
 	solidGroup = {},
 	friction = .5,
-	type = "gameobject",
-	subtype = "game_generic",
+	objectType = "gameobject",
 	reactsToCollision = false,
 	spriteIndex = 1,
 	size = {w=16, h=16}

@@ -2,7 +2,7 @@ Player = Object:extends{
 	objectType = "game_player",
 	reactsToCollision = true,
 	spriteIndex = 119,
-	solidGroup = {"wall"},
+	solidGroup = {"game_wall", "game_npc"},
 	size = {w=16,h=16}
 }
 function Player:__init(x,y)
