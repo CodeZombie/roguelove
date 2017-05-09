@@ -67,6 +67,6 @@ function InterfaceObject:getAbsoluteSize(camera_)
   return {w = self.size.w * parentSize.w, h = self.size.h * parentSize.h}
 end
 
-function InterfaceObject:draw(spriteManager_, camera_)
+function InterfaceObject:draw(camera_)
   --if parent is a gameObject (game_generic, game_npc, game_player, etc), then it needs to be bound to the camera
 end

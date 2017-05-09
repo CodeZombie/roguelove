@@ -4,12 +4,12 @@ March 15th:
 
 March 16th:
 	I've been thinking the movement feels a little clunky. When the player moves, there are a few hundred ms where attempting
-	to move does not work, as the AI is taking its turn and animating it's moves. This feels frustrating. To remedy this, I'll 
-	put in something that notifies the player when they can move. Probably arrows surrounding the player on the ground. When the arrows appear, 
+	to move does not work, as the AI is taking its turn and animating it's moves. This feels frustrating. To remedy this, I'll
+	put in something that notifies the player when they can move. Probably arrows surrounding the player on the ground. When the arrows appear,
 	the player can move. When they're gone, they wait. This should remove any frustration caused by buttons not responding.
 	Also, ai should only animate when it's on screen. This should make movement quicker when theres nobody else on screen.
 
-March 17th: 
+March 17th:
 	Clean up the mapgen functions. Restore order to this horrible file
 
 May 2017:
@@ -17,3 +17,9 @@ May 2017:
 	No longer a turn based engine.
 	interface manager started.
 	Many other small changes.
+
+	todo:
+		allow objects a way to interact with interface objects safely (without strict coupling)
+		so for example, a healthbar interface object is created to represent the health of a specific NPC. that NPC will get the ID of that healthbar and will be able to send it commands like resize, etc.
+
+		Give objects a flag that prevents them from leaving the bounds of the map (sort of like a border of walls keeping them inside)

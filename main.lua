@@ -1,7 +1,9 @@
 class = require '30log'
 require 'gamemath'
+require 'game'
 require 'gamestate'
-require 'spriteManager'
+require 'spritesheet'
+require 'spritesheetManager'
 require 'camera'
 require 'graphics'
 require 'objectmanager'
@@ -18,50 +20,37 @@ require 'scene'
 require 'scenes/gamescene'
 require 'scenes/mainmenuscene'
 
-
-
 _ACCUMULATOR = 0
 UPDATES_PER_SECOND = 60
 
-pixelFont = nil
-CurrentScene = nil
-
 function love.load()
-	--load data that will persist across scenes:
-	--SpriteManager.load("images/spritesheet.png")
-	love.graphics.setFont(love.graphics.newFont("fonts/pixel.ttf", 16))
-	Graphics.disableSmoothing()
-
-	CurrentScene = GameScene:new()
+	Game.loadResources()
+	Game.init()
 end
 
 function checkKeyboard()
-	local keys = {"w", "a", "s", "d", " ", "r", "escape"}
+	local keys = {"w", "a", "s", "d", " ", "r", "o", "p", "escape"} --eventually this will be handled a little neater. (config file or something)
 
 	for _,key_ in ipairs(keys) do
 		if love.keyboard.isDown(key_) then
-			CurrentScene:keyPress(key_)
-			if key_ == "r" then
-				CurrentScene = nil
-				CurrentScene = GameScene:new()
-			end
+			Game.keyPress(key_)
 		end
 	end
 end
 
 function love.mousepressed(x, y, button, istouch)
-	CurrentScene:mousePress(x, y, button, istouch)
+	Game.mousePress(x, y, button, istouch)
 end
 
 function love.update(dt)
 	_ACCUMULATOR = _ACCUMULATOR + math.ceil(dt*100000)
 	while _ACCUMULATOR >= math.ceil(100000/UPDATES_PER_SECOND) do
 		checkKeyboard()
-		CurrentScene:update()
+		Game.update()
 		_ACCUMULATOR = _ACCUMULATOR - math.ceil(100000/UPDATES_PER_SECOND)
 	end
 end
 
 function love.draw()
-	CurrentScene:draw()
+	Game.draw()
 end

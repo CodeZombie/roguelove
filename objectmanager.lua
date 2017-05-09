@@ -61,8 +61,8 @@ function ObjectManager:update()
 	end
 end
 
-function ObjectManager:draw(spriteManager_, camera_)
+function ObjectManager:draw(camera_)
 	for n=1, self.numberOfObjects do
-		self.objects[n]:draw(spriteManager_, camera_)
+		self.objects[n]:draw(camera_)
 	end
 end

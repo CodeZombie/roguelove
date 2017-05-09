@@ -8,7 +8,7 @@ function GameMath.pointInTriangle(point, tri1, tri2, tri3)
 	b1 = GameMath.sign(point, tri1, tri2) < 0
 	b2 = GameMath.sign(point, tri2, tri3) < 0
 	b3 = GameMath.sign(point, tri3, tri1) < 0
-	
+
 	return ((b1 == b2) and (b2 == b3))
 end
 
@@ -18,5 +18,5 @@ function GameMath.round(num, idp)
 end
 
 function GameMath.sign(x_)
-	return (x_<0 and -1) or 1
+	return (x_ < 0 and -1) or 1
 end

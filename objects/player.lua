@@ -1,7 +1,7 @@
 Player = Object:extends{
 	objectType = "game_player",
 	reactsToCollision = true,
-	spriteIndex = 119,
+	spriteIndex = 1,
 	solidGroup = {"game_wall", "game_npc"},
 	size = {w=16,h=16}
 }
@@ -11,7 +11,11 @@ end
 
 function Player:update(objectManager_)
 	Player.super.update(self, objectManager_)
-	self.spriteIndex = 119
+
+	if self.velocity.x == 0 and self.velocity.y == 0 then
+		self:setAnimationState("blank_idle")
+	end
+
 end
 
 function Player:keyPress(key_)
@@ -19,12 +23,16 @@ function Player:keyPress(key_)
 
 	if key_ == "w" then
 		self:addVelocity(0,-1)
+		self:setAnimationState("blank_walk_up")
 	elseif key_ == "s" then
 		self:addVelocity(0,1)
+		self:setAnimationState("blank_walk_down")
 	elseif key_ == "a" then
 		self:addVelocity(-1,0)
+		self:setAnimationState("blank_walk_left")
 	elseif key_ == "d" then
 		self:addVelocity(1,0)
+		self:setAnimationState("blank_walk_right")
 	end
 end
 

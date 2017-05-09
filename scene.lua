@@ -3,7 +3,6 @@ Scene = class{
   interfaceManager = nil,
   gameState = nil,
   camera = nil,
-  spriteManager = nil,
   mapWidth = 512,
   mapHeight = 512
 }

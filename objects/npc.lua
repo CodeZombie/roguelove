@@ -6,6 +6,7 @@ NPC = Object:extends{
 	spriteIndex = 110,
 	xVel = 0,
 	yVel = 0
+
 }
 function NPC:__init(x,y)
 	NPC.super.__init(self, x,y)
@@ -13,11 +14,14 @@ end
 
 function NPC:update(objectManager_)
 	NPC.super.update(self, objectManager_)
-	if love.math.random() >= 0.9 then
-		self.xVel = self.xVel + love.math.random(-.1,.2)
-		self.yVel = self.yVel + love.math.random(-.1,.2)
+
+	if love.math.random() >= 0.99 then
+		rn = math.floor(love.math.random(0,2))-1
+		self.xVel = 1
+		rn = math.floor(love.math.random(0,2))-1
+		self.yVel = 1
 	end
-	self:addVelocity(self.xVel, self.yVel)
+	self:addVelocity((self.xVel), (self.yVel))
 end
 
 function NPC:kill()

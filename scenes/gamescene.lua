@@ -2,27 +2,28 @@ GameScene = Scene:extends{
 }
 
 function GameScene:__init()
-	self.spriteManager = SpriteManager:new()
-
-	self.spriteManager:loadSpriteSheet("images/spritesheet.png", 16)
-
 	--self.gameState = GameState:new()
 	self.interfaceManager = InterfaceManager:new()
 
 	self.objectManager = ObjectManager:new()
 
 	local player = self.objectManager:addObject(Player:new(128,128))
+	player:setSpritesheet("images/characters-1.png")
+	player:setAnimationState("blank_idle")
 	self.camera = Camera:new(player)
 
 	--fill objectManager up with NPCS:
 	for n=1, 24 do
-		local npc = self.objectManager:addObject(NPC:new(64,64))
+		--local npc = self.objectManager:addObject(NPC:new(64,64))
+		local npc = self.objectManager:addObject(NPC:new(16 * math.floor((love.math.random()*self.mapWidth)/16), 16 * math.floor((love.math.random()*self.mapWidth)/16)))
+		npc:setSpritesheet("images/spritesheet.png")
 		npc:setSpriteIndex(math.ceil(love.math.random()*128))
 	end
 
 	--fill objectManager up with walls:
 	for n=1, 128 do
-		self.objectManager:addObject(Wall:new(16 * math.floor((love.math.random()*self.mapWidth)/16), 16 * math.floor((love.math.random()*self.mapWidth)/16)))
+		local wall = self.objectManager:addObject(Wall:new(16 * math.floor((love.math.random()*self.mapWidth)/16), 16 * math.floor((love.math.random()*self.mapWidth)/16)))
+		wall:setSpritesheet("images/spritesheet.png")
 	end
 
 
@@ -69,8 +70,8 @@ end
 
 function GameScene:draw()
 	--(Camera.objectToFollow.position.x) - (400/Graphics.drawScale) + (Map.tileSize/2)
-	self.objectManager:draw(self.spriteManager, self.camera)
+	self.objectManager:draw(self.camera)
 
 	love.graphics.print("DUNGEON - LEVEL 1", 256+48, 48)
-	self.interfaceManager:draw(self.spriteManager, self.camera)
+	self.interfaceManager:draw(self.camera)
 end

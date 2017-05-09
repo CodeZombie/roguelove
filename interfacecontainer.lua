@@ -11,8 +11,8 @@ function InterfaceContainer:setFillColor(color_)
   self.fillColor = color_
 end
 
-function InterfaceContainer:draw(spriteManager_, camera_)
-  InterfaceContainer.super.draw(self, spriteManager_, camera_)
+function InterfaceContainer:draw(camera_)
+  InterfaceContainer.super.draw(self, camera_)
   --generate absolute pos/size
   p = self:getAbsolutePosition(camera_)
   s = self:getAbsoluteSize(camera_)

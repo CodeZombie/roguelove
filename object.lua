@@ -7,7 +7,11 @@ Object = class{
 	friction = .5,
 	objectType = "gameobject",
 	reactsToCollision = false,
-	spriteIndex = 1,
+	spritesheet = nil, --ID'd by filename
+	animationState = nil, --string representing the spritesheet's animation states. If nil, we do not animate, and spriteIndex remains static
+	animationFrameCounter = 0, --keeps track of the time in between each frame
+	animationFrameIterator = 1, --keeps track of which frame we're on inside the animation
+	spriteIndex = 1, --individual sprite within the spritesheet
 	size = {w=16, h=16}
 }
 
@@ -18,6 +22,40 @@ end
 
 function Object:setObjectType(t_)
 	self.objectType = t_
+end
+
+function Object:setSpritesheet(ss_)
+	self.spritesheet = ss_
+end
+
+function Object:setAnimationState(state_)
+	--determine if this state is valid...
+	if state_ == nil then
+		print("Error: Attempting to set animation state of NIL")
+		return
+	end
+
+	if self.spritesheet == nil then
+		print("Error: Attempting to apply animation state to object that has no spritesheet")
+		return
+	end
+
+	if SpritesheetManager.spritesheets[self.spritesheet].animationScenes[state_] == nil then
+			print("Error: Attempting to use animationState '" .. state_ .. "' to spritesheet that contains no such animation state")
+			return
+	end
+
+	if self.animationState ~= state_ then
+
+		self.animationState = state_
+		--self.animationFrameIterator = 1
+		if self.animationFrameIterator <= table.getn(SpritesheetManager.spritesheets[self.spritesheet].animationScenes[self.animationState]) then
+			self.spriteIndex = SpritesheetManager.spritesheets[self.spritesheet].animationScenes[self.animationState][self.animationFrameIterator]
+		else
+			self.animationFrameIterator = 1
+			self.spriteIndex = SpritesheetManager.spritesheets[self.spritesheet].animationScenes[self.animationState][self.animationFrameIterator]
+		end
+	end
 end
 
 function Object:setSpriteIndex(s_)
@@ -56,9 +94,30 @@ function Object:addVelocity(x_, y_)
 
 end
 
-function Object:draw(spriteManager_, camera_)
-	spriteManager_:draw(self.spriteIndex, self.position.x , self.position.y, self.size.w, self.size.h, camera_)
+function Object:draw(camera_)
+	SpritesheetManager.draw(self.spritesheet, self.spriteIndex, self.position.x , self.position.y, self.size.w, self.size.h, camera_)
 	--Graphics.drawTextOnGrid("(" .. self.position.x .. ", " .. self.position.y .. ")", self.position.x, self.position.y)
+end
+
+function Object:updateAnimation()
+	if self.animationState ~= nil and self.spritesheet ~= nil then --if we are supposed to be animating, and have a spritesheet
+		if SpritesheetManager.spritesheets[self.spritesheet].animationScenes[self.animationState] ~= nil then --if our current animation scene exists in the spritesheet
+			if self.animationFrameCounter >= SpritesheetManager.spritesheets[self.spritesheet].updatesPerAnimationFrame then --and if it's time to update our frame
+				self.animationFrameCounter = 0
+			--determine which frame in the cycle we're in. If we're not in any, set us to the first frame and break:
+				self.spriteIndex = SpritesheetManager.spritesheets[self.spritesheet].animationScenes[self.animationState][self.animationFrameIterator]
+
+				local numFrames = table.getn(SpritesheetManager.spritesheets[self.spritesheet].animationScenes[self.animationState]) -- number of frames
+
+				if self.animationFrameIterator >= numFrames then
+					self.animationFrameIterator = 1
+				else
+					self.animationFrameIterator = self.animationFrameIterator + 1
+				end
+			end
+				self.animationFrameCounter = self.animationFrameCounter + 1
+		end
+	end
 end
 
 function Object:update(objectManager_)
@@ -71,7 +130,6 @@ function Object:update(objectManager_)
 	if self.velocity.y ~= 0 then
 		self.velocity.y = self.velocity.y - (self.friction * GameMath.sign(self.velocity.y))
 	end
-
 
 	--apply velocity
 	self.position.x = math.floor(self.position.x + self.velocity.x)
@@ -88,4 +146,5 @@ function Object:update(objectManager_)
 			self.position.y = math.floor(self.position.y - GameMath.sign(self.velocity.y))
 		end
 	end
+	self:updateAnimation()
 end

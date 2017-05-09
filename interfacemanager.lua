@@ -31,8 +31,8 @@ function InterfaceManager:addInterface(interface_)
 	return interface_
 end
 
-function InterfaceManager:draw(spriteManager_, camera_)
+function InterfaceManager:draw(camera_)
 	for n=1, self.numberOfInterfaces do
-		self.interfaces[n]:draw(spriteManager_, camera_)
+		self.interfaces[n]:draw(camera_)
 	end
 end
