@@ -4,6 +4,7 @@ require 'game'
 require 'gamestate'
 require 'spritesheet'
 require 'spritesheetManager'
+require 'map'
 require 'camera'
 require 'graphics'
 require 'objectmanager'
@@ -29,7 +30,7 @@ function love.load()
 end
 
 function checkKeyboard()
-	local keys = {"w", "a", "s", "d", " ", "r", "o", "p", "escape"} --eventually this will be handled a little neater. (config file or something)
+	local keys = {"w", "s", "a", "d", " ", "r", "o", "p", "escape"} --eventually this will be handled a little neater. (config file or something)
 
 	for _,key_ in ipairs(keys) do
 		if love.keyboard.isDown(key_) then

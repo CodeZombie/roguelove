@@ -23,22 +23,17 @@ function Player:keyPress(key_)
 
 	if key_ == "w" then
 		self:addVelocity(0,-1)
-		self:setAnimationState("blank_walk_up")
 	elseif key_ == "s" then
 		self:addVelocity(0,1)
-		self:setAnimationState("blank_walk_down")
 	elseif key_ == "a" then
 		self:addVelocity(-1,0)
-		self:setAnimationState("blank_walk_left")
 	elseif key_ == "d" then
 		self:addVelocity(1,0)
-		self:setAnimationState("blank_walk_right")
 	end
 end
 
 function Player:onCollision(other_)
 	Player.super.onCollision(self, other_)
-
 end
 
 function Player:checkMouseInput(x_, y_, button_, map_, camera_)

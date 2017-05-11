@@ -1,4 +1,5 @@
 GameScene = Scene:extends{
+	map = nil
 }
 
 function GameScene:__init()
@@ -7,24 +8,31 @@ function GameScene:__init()
 
 	self.objectManager = ObjectManager:new()
 
-	local player = self.objectManager:addObject(Player:new(128,128))
+	--generate map:
+	self.map = Map:new(128, 128, 5, 10)
+	self.map:setSpritesheet("images/map_dungeon.png")
+
+	--find a random room to spawn our player:
+	local playerRoom = self.map:getRooms()[math.floor(love.math.random() * table.getn(self.map:getRooms()))]
+
+	local player = self.objectManager:addObject(Player:new((playerRoom.x + math.floor(love.math.random() * playerRoom.width))*16, (playerRoom.y + math.floor(love.math.random() * playerRoom.height))*16))
 	player:setSpritesheet("images/characters-1.png")
 	player:setAnimationState("blank_idle")
 	self.camera = Camera:new(player)
 
 	--fill objectManager up with NPCS:
-	for n=1, 24 do
+	for n=1, 128 do
 		--local npc = self.objectManager:addObject(NPC:new(64,64))
-		local npc = self.objectManager:addObject(NPC:new(16 * math.floor((love.math.random()*self.mapWidth)/16), 16 * math.floor((love.math.random()*self.mapWidth)/16)))
+		local npc = self.objectManager:addObject(NPC:new(16 * math.floor((love.math.random()*(self.mapWidth))/16), 16 * math.floor((love.math.random()*(self.mapWidth))/16)))
 		npc:setSpritesheet("images/spritesheet.png")
 		npc:setSpriteIndex(math.ceil(love.math.random()*128))
 	end
 
 	--fill objectManager up with walls:
-	for n=1, 128 do
-		local wall = self.objectManager:addObject(Wall:new(16 * math.floor((love.math.random()*self.mapWidth)/16), 16 * math.floor((love.math.random()*self.mapWidth)/16)))
-		wall:setSpritesheet("images/spritesheet.png")
-	end
+	--for n=1, 128 do
+	--	local wall = self.objectManager:addObject(Wall:new(16 * math.floor((love.math.random()*self.mapWidth)/16), 16 * math.floor((love.math.random()*self.mapWidth)/16)))
+		--	wall:setSpritesheet("images/spritesheet.png")
+	--end
 
 
 	--GameState.init()
@@ -69,6 +77,7 @@ function GameScene:update()
 end
 
 function GameScene:draw()
+	self.map:draw(self.camera)
 	--(Camera.objectToFollow.position.x) - (400/Graphics.drawScale) + (Map.tileSize/2)
 	self.objectManager:draw(self.camera)
 

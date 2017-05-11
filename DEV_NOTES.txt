@@ -19,7 +19,26 @@ May 2017:
 	Many other small changes.
 
 	todo:
+		MOST IMPORTANT:::: make the player movement not fucking suck. Just do whatever they did on the GBA LOZ games.
+		SECOND MOST IMPORTANT:::: 	The map generator should generate a bunch of wall objects that cover the entire outside of the map.
+						Also, scrap the 2darray thing. It works okay but it doesnt allow for tiles outside the array size. 
+						If we use a tile-struct based system, the map can stretch out in any direction forever with no performance hit.
+						(as in, generate the map where each tile is a table(struct) (with an x,y, type value)) This will be a bit more performance intensive,
+						but it only needs to be done once, as the mapgen will generate a static texture which will remain static inside the map object.
+						The map generator will also generate large invisible rects which will outline the walls of the map, allowing for ingame collisions with the map.
+						
+						Rough outline of mapgen:
+							1: The entire infinite space will be dealt with in quantized space. The quantization will allow for roomMaxSize.
+							   From here, generate #<minNumOfRooms>, each one linking to another. 
+							2: once finished, generate a random number of other rooms, and link them in, up to <MaxNumOfRooms>
+							3: now lets generate the walls by outlining what we just made, and then create a list of invisible rects outlining the entire
+							   structure efficiently for collision mapping.
+							4: now, lets generate the static texture for this map. This stage is where shading tiles and such are applied.
+							5: that's pretty much it. If we want to pass Map the objectManager, it can fill rooms up with stuff, or the Scene can access
+							   Map's Rooms{} field and do it on its own, though that'd be messy & gross. Think about it.
+
+							Now when we want to draw the map, we're just drawing a static texture, and all collisions are handled by ObjectManager like they should be
+
+
 		allow objects a way to interact with interface objects safely (without strict coupling)
 		so for example, a healthbar interface object is created to represent the health of a specific NPC. that NPC will get the ID of that healthbar and will be able to send it commands like resize, etc.
-
-		Give objects a flag that prevents them from leaving the bounds of the map (sort of like a border of walls keeping them inside)

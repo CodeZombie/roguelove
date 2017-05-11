@@ -9,11 +9,13 @@ function Game.loadResources()
   SpritesheetManager.newSpritesheet("images/spritesheet.png", 16)
 
   local ss = SpritesheetManager.newSpritesheet("images/characters-1.png", 16)
-  ss:addAnimationScenes({["blank_idle"] = {2}})
-  ss:addAnimationScenes({["blank_walk_down"] = {1, 2, 3, 2}})
-  ss:addAnimationScenes({["blank_walk_left"] = {13, 14, 15, 14}})
-  ss:addAnimationScenes({["blank_walk_right"] = {25, 26, 27, 26}})
-  ss:addAnimationScenes({["blank_walk_up"] = {37, 38, 39, 38}})
+  ss:addAnimationScenes({["idle"] = {2}})
+  ss:addAnimationScenes({["walk_down"] = {1, 2, 3, 2}})
+  ss:addAnimationScenes({["walk_left"] = {13, 14, 15, 14}})
+  ss:addAnimationScenes({["walk_right"] = {25, 26, 27, 26}})
+  ss:addAnimationScenes({["walk_up"] = {37, 38, 39, 38}})
+
+  SpritesheetManager.newSpritesheet("images/map_dungeon.png", 16)
 end
 
 function Game.init()

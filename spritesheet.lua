@@ -4,7 +4,7 @@ Spritesheet = class{
   filename = "", --the unique filename that this spritesheet describes
   quads = {}, --each indidual sprite in the spritesheet
 	animationScenes = {}, --a data structure describing the different scenes of animation
-  updatesPerAnimationFrame = 20 --the number of game updates in between animation frame-changes.
+  updatesPerAnimationFrame = 10 --the number of game updates in between animation frame-changes.
 }
 
 function Spritesheet:__init(filename_, tilesize_, id_)
