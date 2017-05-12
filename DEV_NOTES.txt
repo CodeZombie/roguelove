@@ -19,7 +19,8 @@ May 2017:
 	Many other small changes.
 
 	todo:
-		MOST IMPORTANT:::: make the player movement not fucking suck. Just do whatever they did on the GBA LOZ games.
+
+		MOST IMPORTANT:::: make the player movement not fucking suck. Just do whatever they did on the GBA LOZ games. REMOVE DIAGONAL MOVING!!!
 		SECOND MOST IMPORTANT:::: 	The map generator should generate a bunch of wall objects that cover the entire outside of the map.
 						Also, scrap the 2darray thing. It works okay but it doesnt allow for tiles outside the array size. 
 						If we use a tile-struct based system, the map can stretch out in any direction forever with no performance hit.

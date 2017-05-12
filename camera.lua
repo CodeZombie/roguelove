@@ -1,18 +1,21 @@
 Camera = class{
 	position = {x=0,y=0},
 	objectToFollow = nil,
-	boundByMap = false
+	boundMap = nil
 }
 
-function Camera:__init(object_)
+function Camera:__init()
+end
+
+function Camera:setObjectToFollow(object_)
 	self.objectToFollow = object_
 end
 
-function Camera:update(mapWidth_, mapHeight_)
+function Camera:update()
 	if self.objectToFollow ~= nil then
 		local tempx = (self.objectToFollow.position.x) - ((Graphics.windowWidth/2)/Graphics.drawScale) + (self.objectToFollow.size.w/2)
 		local tempy = (self.objectToFollow.position.y) - ((Graphics.windowHeight/2)/Graphics.drawScale) + (self.objectToFollow.size.h/2)
-		if self.boundByMap == true then
+		if self.boundMap ~= nil then
 			if tempx >= 0 and tempx <= (mapWidth_ - ((Graphics.windowWidth)/Graphics.drawScale)) then
 				self.position.x = math.floor(tempx)
 			elseif tempx < 0 then

@@ -3,7 +3,8 @@ Spritesheet = class{
   tileSize = 16, --default is 16
   filename = "", --the unique filename that this spritesheet describes
   quads = {}, --each indidual sprite in the spritesheet
-	animationScenes = {}, --a data structure describing the different scenes of animation
+	animationSequences = {}, --a data structure describing the different scenes of animation
+  defaultSequence = nil,
   updatesPerAnimationFrame = 10 --the number of game updates in between animation frame-changes.
 }
 
@@ -39,8 +40,8 @@ function Spritesheet:draw(quadIndex_, x_, y_, w_, h_, camera_)
   end
 end
 
-function Spritesheet:addAnimationScenes(animationScenes_)
-  for key, val in pairs(animationScenes_) do
-    self.animationScenes[key] = val
+function Spritesheet:addAnimationSequence(animationSequences_)
+  for key, val in pairs(animationSequences_) do
+    self.animationSequences[key] = val
   end
 end

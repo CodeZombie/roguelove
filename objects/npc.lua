@@ -3,7 +3,6 @@ NPC = Object:extends{
 	objectType = "game_npc",
 	solidGroup = {"game_wall", "game_player", "game_npc"},
 	reactsToCollision = true,
-	spriteIndex = 110,
 	xVel = 0,
 	yVel = 0
 

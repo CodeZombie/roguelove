@@ -3,15 +3,13 @@ Object = class{
 	position = {x=0, y=0},
 	velocity = {x=0, y=0},
 	maxVelocity = {x=3, y=3},
-	solidGroup = {},
+	solidGroup = {}, --the group of things to collide with
 	friction = .5,
 	objectType = "gameobject",
-	reactsToCollision = false,
+	reactsToCollision = false, --NOTE NOTE NOTE: I'm fairly sure this property doesnt do anything. Look into removing it.
 	spritesheet = nil, --ID'd by filename
-	animationState = nil, --string representing the spritesheet's animation states. If nil, we do not animate, and spriteIndex remains static
-	animationFrameCounter = 0, --keeps track of the time in between each frame
-	animationFrameIterator = 1, --keeps track of which frame we're on inside the animation
-	spriteIndex = 1, --individual sprite within the spritesheet
+	animationSequence = nil, --formerly AnimationState --string representing the spritesheet's animation states. If nil, we do not animate, and spriteIndex remains static
+	animationFrame = 1, --keeps track of which frame we're on inside the animation
 	size = {w=16, h=16},
 	quadTreeX = 0, --used to partition all objects into squares for checking collisions
 	quadTreeY = 0
@@ -31,32 +29,25 @@ function Object:setSpritesheet(ss_)
 	self.spritesheet = ss_
 end
 
-function Object:setAnimationState(state_)
-	--determine if this state is valid...
-	if state_ == nil then
-		--print("Error: Attempting to set animation state of NIL")
+function Object:setAnimationSequence(sequence_)
+	if sequence_ == nil then
+		--print("Error: Attempting to set animation sequence of NIL")
 		return
 	end
 
 	if self.spritesheet == nil then
-		--print("Error: Attempting to apply animation state to object that has no spritesheet")
+		--print("Error: Attempting to apply animation sequence to object that has no spritesheet")
 		return
 	end
 
-	if SpritesheetManager.spritesheets[self.spritesheet].animationScenes[state_] == nil then
-			--print("Error: Attempting to use animationState '" .. state_ .. "' to spritesheet that contains no such animation state")
+	if SpritesheetManager.spritesheets[self.spritesheet].animationSequences[sequence_] == nil then
+			--print("Error: Attempting to use animation sequence '" .. sequence_ .. "' from spritesheet that contains no such animation sequence")
 			return
 	end
 
-	if self.animationState ~= state_ then
-		self.animationState = state_
-		--self.animationFrameIterator = 1
-		if self.animationFrameIterator <= table.getn(SpritesheetManager.spritesheets[self.spritesheet].animationScenes[self.animationState]) then
-			self.spriteIndex = SpritesheetManager.spritesheets[self.spritesheet].animationScenes[self.animationState][self.animationFrameIterator]
-		else
-			self.animationFrameIterator = 1
-			self.spriteIndex = SpritesheetManager.spritesheets[self.spritesheet].animationScenes[self.animationState][self.animationFrameIterator]
-		end
+	if self.animationSequence ~= sequence_ then
+		self.animationSequence = sequence_
+		self.animationFrame = 1
 	end
 end
 
@@ -104,27 +95,45 @@ function Object:addVelocity(x_, y_)
 end
 
 function Object:draw(camera_)
-	SpritesheetManager.draw(self.spritesheet, self.spriteIndex, self.position.x , self.position.y, self.size.w, self.size.h, camera_)
+	if 	self.spritesheet == nil then
+		return
+	end
+	if 	SpritesheetManager.spritesheets[self.spritesheet] == nil or
+			self.animationSequence == nil or
+			SpritesheetManager.spritesheets[self.spritesheet].animationSequences[self.animationSequence] == nil or
+			SpritesheetManager.spritesheets[self.spritesheet].animationSequences[self.animationSequence].frames[self.animationFrame] == nil then
+				--print("bogus")
+		return
+	end
+	if SpritesheetManager.spritesheets[self.spritesheet].animationSequences[self.animationSequence].frames[self.animationFrame] == nil then
+
+		return
+	end
+	SpritesheetManager.draw(self.spritesheet, SpritesheetManager.spritesheets[self.spritesheet].animationSequences[self.animationSequence].frames[self.animationFrame], self.position.x , self.position.y, self.size.w, self.size.h, camera_)
 	--Graphics.drawTextOnGrid("(" .. self.position.x .. ", " .. self.position.y .. ")", self.position.x, self.position.y)
 end
 
-function Object:updateAnimation()
-	if self.animationState ~= nil and self.spritesheet ~= nil then --if we are supposed to be animating, and have a spritesheet
-		if SpritesheetManager.spritesheets[self.spritesheet].animationScenes[self.animationState] ~= nil then --if our current animation scene exists in the spritesheet
-			if self.animationFrameCounter >= SpritesheetManager.spritesheets[self.spritesheet].updatesPerAnimationFrame then --and if it's time to update our frame
-				self.animationFrameCounter = 0
-			--determine which frame in the cycle we're in. If we're not in any, set us to the first frame and break:
-				self.spriteIndex = SpritesheetManager.spritesheets[self.spritesheet].animationScenes[self.animationState][self.animationFrameIterator]
+function Object:updateAnimation(time_)
+	if self.animationSequence == nil or self.spritesheet == nil then --no animation sequence defined, or no spritesheet
+		return
+	end
+	if SpritesheetManager.spritesheets[self.spritesheet].animationSequences[self.animationSequence] == nil then --if the animationSequence is undefined in the spritesheet
+		--this should be treated as a warning
+		return
+	end
 
-				local numFrames = table.getn(SpritesheetManager.spritesheets[self.spritesheet].animationScenes[self.animationState]) -- number of frames
+	if SpritesheetManager.spritesheets[self.spritesheet].animationSequences[self.animationSequence].framerate == 0 then -- the framerate is 0, indicating no animation necessary
+		return
+	end
 
-				if self.animationFrameIterator >= numFrames then
-					self.animationFrameIterator = 1
-				else
-					self.animationFrameIterator = self.animationFrameIterator + 1
-				end
+	if time_ % math.floor(60/SpritesheetManager.spritesheets[self.spritesheet].animationSequences[self.animationSequence].framerate) == 0 then --if it's time to update
+		if self.animationFrame >= table.getn(SpritesheetManager.spritesheets[self.spritesheet].animationSequences[self.animationSequence].frames) then
+			if SpritesheetManager.spritesheets[self.spritesheet].animationSequences[self.animationSequence].next ~= nil then
+				self:setAnimationSequence( SpritesheetManager.spritesheets[self.spritesheet].animationSequences[self.animationSequence].next)
 			end
-				self.animationFrameCounter = self.animationFrameCounter + 1
+			self.animationFrame = 1
+		else
+			self.animationFrame = self.animationFrame + 1
 		end
 	end
 end
@@ -132,19 +141,19 @@ end
 function Object:update(objectManager_)
 	--update movement animation:
 	if self.velocity.y > 0 then
-		self:setAnimationState("walk_down")
+		self:setAnimationSequence("walk_down")
 	elseif self.velocity.y < 0 then
-		self:setAnimationState("walk_up")
+		self:setAnimationSequence("walk_up")
 	end
 
 	if self.velocity.x > 0 then
-		self:setAnimationState("walk_right")
+		self:setAnimationSequence("walk_right")
 	elseif self.velocity.x < 0 then
-		self:setAnimationState("walk_left")
+		self:setAnimationSequence("walk_left")
 	end
 
 	if self.velocity.x == 0 and self.velocity.y == 0 then
-		self:setAnimationState("idle")
+	--	self:setAnimationSequence("idle")
 	end
 
 	--apply friction
@@ -172,5 +181,4 @@ function Object:update(objectManager_)
 			self.position.y = math.floor(self.position.y - GameMath.sign(self.velocity.y))
 		end
 	end
-	self:updateAnimation()
 end

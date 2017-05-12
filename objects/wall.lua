@@ -1,7 +1,6 @@
 Wall = Object:extends{
 	objectType = "game_wall",
-	reactsToCollision = false,
-	spriteIndex = 67
+	reactsToCollision = false
 }
 function Wall:__init(x,y)
 	Wall.super.__init(self, x,y)

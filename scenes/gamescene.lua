@@ -3,28 +3,27 @@ GameScene = Scene:extends{
 }
 
 function GameScene:__init()
-	--self.gameState = GameState:new()
-	self.interfaceManager = InterfaceManager:new()
-
-	self.objectManager = ObjectManager:new()
+	self.super.__init(self)
 
 	--generate map:
-	self.map = Map:new(128, 128, 5, 10)
+	self.map = Map:new(128, 128, 20, 25)
 	self.map:setSpritesheet("images/map_dungeon.png")
 
 	--find a random room to spawn our player:
 	local playerRoom = self.map:getRooms()[math.floor(love.math.random() * table.getn(self.map:getRooms()))]
 
 	local player = self.objectManager:addObject(Player:new((playerRoom.x + math.floor(love.math.random() * playerRoom.width))*16, (playerRoom.y + math.floor(love.math.random() * playerRoom.height))*16))
-	player:setSpritesheet("images/characters-1.png")
-	player:setAnimationState("blank_idle")
-	self.camera = Camera:new(player)
+	player:setSpritesheet("images/man.png")
+	player:setAnimationSequence("blank_idle")
+	self.camera:setObjectToFollow(player)
+
 
 	--fill objectManager up with NPCS:
 	for n=1, 128 do
 		--local npc = self.objectManager:addObject(NPC:new(64,64))
 		local npc = self.objectManager:addObject(NPC:new(16 * math.floor((love.math.random()*(self.mapWidth))/16), 16 * math.floor((love.math.random()*(self.mapWidth))/16)))
-		npc:setSpritesheet("images/spritesheet.png")
+		npc:setSpritesheet("images/slime.png")
+		npc:setAnimationSequence("idle")
 		npc:setSpriteIndex(math.ceil(love.math.random()*128))
 	end
 
@@ -34,13 +33,6 @@ function GameScene:__init()
 		--	wall:setSpritesheet("images/spritesheet.png")
 	--end
 
-
-	--GameState.init()
-	--Map.generate()
-	--NPCManager.populate()
-	--GameScene.player = Player:new(24,24)
-
-	--Camera.setObjectToFollow(GameScene.player)
 
 	local healthbar = self.interfaceManager:addInterface(InterfaceContainer:new(player, "relative", 0, -.2, "relative", 1, .2))
 	healthbar:setClickable(false)
@@ -55,32 +47,22 @@ end
 
 function GameScene:keyPress(key)
 	self.super.keyPress(self,key)
-
-	self.objectManager:keyPress(key)
-
 	if key == "escape" then
 		love.event.push('quit')
 	end
 end
 
 function GameScene:mousePress(x_, y_, button_, istouch_)
-	--self.player:checkMouseInput(x, y, button, self.map, self.camera)
-	self.interfaceManager:onClick(x_, y_, button_, istouch_, self.camera)
+	self.super.mousePress(self, x_, y_, button_, istouch_)
 end
 
-function GameScene:update()
-
-	self.objectManager:update()
-	self.objectManager:checkCollisions()
-	self.camera:update(self.mapWidth, self.mapHeight)
-	--self.gameState:update()
+function GameScene:update(time_)
+	self.super.update(self, time_)
 end
 
 function GameScene:draw()
 	self.map:draw(self.camera)
-	--(Camera.objectToFollow.position.x) - (400/Graphics.drawScale) + (Map.tileSize/2)
-	self.objectManager:draw(self.camera)
 
+	self.super.draw(self)
 	love.graphics.print("DUNGEON - LEVEL 1", 256+48, 48)
-	self.interfaceManager:draw(self.camera)
 end

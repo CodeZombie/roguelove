@@ -55,6 +55,12 @@ function ObjectManager:addObject(object_)
 	return object_
 end
 
+function ObjectManager:updateAnimation(time_)
+	for n=1, self.numberOfObjects do
+		self.objects[n]:updateAnimation(time_)
+	end
+end
+
 function ObjectManager:update()
 	for n=1, self.numberOfObjects do
 		self.objects[n]:update(self)

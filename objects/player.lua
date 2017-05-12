@@ -1,19 +1,19 @@
 Player = Object:extends{
 	objectType = "game_player",
 	reactsToCollision = true,
-	spriteIndex = 1,
 	solidGroup = {"game_wall", "game_npc"},
 	size = {w=16,h=16}
 }
 function Player:__init(x,y)
 	Player.super.__init(self, x,y)
+	self:setAnimationSequence("blank_idle")
 end
 
 function Player:update(objectManager_)
 	Player.super.update(self, objectManager_)
 
 	if self.velocity.x == 0 and self.velocity.y == 0 then
-		self:setAnimationState("blank_idle")
+		self:setAnimationSequence("blank_idle")
 	end
 
 end
@@ -29,6 +29,10 @@ function Player:keyPress(key_)
 		self:addVelocity(-1,0)
 	elseif key_ == "d" then
 		self:addVelocity(1,0)
+	end
+
+	if key_ == "r" then
+		self:setAnimationSequence("dance")
 	end
 end
 
