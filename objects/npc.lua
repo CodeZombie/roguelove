@@ -13,14 +13,14 @@ end
 
 function NPC:update(objectManager_)
 	NPC.super.update(self, objectManager_)
-
+ --[[
 	if love.math.random() >= 0.99 then
 		rn = math.floor(love.math.random(0,2)) -1
 		self.xVel = rn
 		rn = math.floor(love.math.random(0,2)) -1
 		self.yVel = rn
 	end
-	self:addVelocity((self.xVel), (self.yVel))
+	self:addVelocity((self.xVel), (self.yVel))--]]
 end
 
 function NPC:kill()

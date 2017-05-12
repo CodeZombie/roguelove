@@ -21,10 +21,10 @@ function GameScene:__init()
 	--fill objectManager up with NPCS:
 	for n=1, 128 do
 		--local npc = self.objectManager:addObject(NPC:new(64,64))
-		local npc = self.objectManager:addObject(NPC:new(16 * math.floor((love.math.random()*(self.mapWidth))/16), 16 * math.floor((love.math.random()*(self.mapWidth))/16)))
-		npc:setSpritesheet("images/slime.png")
-		npc:setAnimationSequence("idle")
-		npc:setSpriteIndex(math.ceil(love.math.random()*128))
+		--local npc = self.objectManager:addObject(NPC:new(16 * math.floor((love.math.random()*(self.mapWidth))/16), 16 * math.floor((love.math.random()*(self.mapWidth))/16)))
+		--npc:setSpritesheet("images/slime.png")
+		--npc:setAnimationSequence("idle")
+		--npc:setSpriteIndex(math.ceil(love.math.random()*128))
 	end
 
 	--fill objectManager up with walls:

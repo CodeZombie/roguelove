@@ -1,6 +1,5 @@
---self.spriteManager:loadSpriteSheet("images/spritesheet.png", 16)
-
 Game = {
+  direction = { up = 1, right = 2, down = 3, left = 4},
   currentScene = nil,
   timeTicker = 1,
   loopTime = 60
@@ -45,6 +44,10 @@ function Game.keyPress(key_)
   if key_ == "p" then
     Graphics.drawScale = Graphics.drawScale + 1
   end
+end
+
+function Game.keyReleased(key_)
+  Game.currentScene:keyReleased(key_)
 end
 
 function Game.update()

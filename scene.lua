@@ -19,6 +19,10 @@ function Scene:keyPress(key)
   self.objectManager:keyPress(key)
 end
 
+function Scene:keyReleased(key_)
+  self.objectManager:keyReleased(key_)
+end
+
 function Scene:mousePress(x_, y_, button_, istouch_)
   self.interfaceManager:onClick(x_, y_, button_, istouch_, self.camera)
 end

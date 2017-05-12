@@ -1,8 +1,6 @@
 Object = class{
 	id = 0,
 	position = {x=0, y=0},
-	velocity = {x=0, y=0},
-	maxVelocity = {x=3, y=3},
 	solidGroup = {}, --the group of things to collide with
 	friction = .5,
 	objectType = "gameobject",
@@ -12,7 +10,10 @@ Object = class{
 	animationFrame = 1, --keeps track of which frame we're on inside the animation
 	size = {w=16, h=16},
 	quadTreeX = 0, --used to partition all objects into squares for checking collisions
-	quadTreeY = 0
+	quadTreeY = 0,
+	direction = Game.direction.up,
+	velocity = 0,
+	maxVelocity = 2.5
 }
 
 function Object:__init(x_, y_)
@@ -58,6 +59,9 @@ end
 function Object:keyPress(key_)
 end
 
+function Object:keyReleased(key_)
+end
+
 function Object:onCollision(other_)
 end
 
@@ -76,11 +80,16 @@ function Object:checkCollision(other_)
 	return false
 end
 
-function Object:checkMapWallCollision(Map_) --check if we're colliding with a map wall
+function Object:addVelocity(direction_, speed_)
+	self.velocity = self.velocity + speed_
 
-end
+	if self.velocity > self.maxVelocity then
+		self.velocity = self.maxVelocity
+	end
 
-function Object:addVelocity(x_, y_)
+	self.direction = direction_
+
+ --[[
 	if math.abs(self.velocity.x) < math.abs(self.maxVelocity.x) then
 		self.velocity.x = self.velocity.x + x_
 	else
@@ -91,7 +100,7 @@ function Object:addVelocity(x_, y_)
 		self.velocity.y = self.velocity.y + y_
 	else
 		self.velocity.y = self.maxVelocity.y * GameMath.sign(self.velocity.y)
-	end
+	end--]]
 end
 
 function Object:draw(camera_)
@@ -139,33 +148,51 @@ function Object:updateAnimation(time_)
 end
 
 function Object:update(objectManager_)
-	--update movement animation:
-	if self.velocity.y > 0 then
-		self:setAnimationSequence("walk_down")
-	elseif self.velocity.y < 0 then
-		self:setAnimationSequence("walk_up")
-	end
 
-	if self.velocity.x > 0 then
+	--update movement animation:
+	if self.direction == Game.direction.down then
+		self:setAnimationSequence("walk_down")
+	elseif self.direction == Game.direction.up then
+		self:setAnimationSequence("walk_up")
+	elseif self.direction == Game.direction.right then
 		self:setAnimationSequence("walk_right")
-	elseif self.velocity.x < 0 then
+	elseif self.direction == Game.direction.left then
 		self:setAnimationSequence("walk_left")
 	end
 
-	if self.velocity.x == 0 and self.velocity.y == 0 then
-	--	self:setAnimationSequence("idle")
+	if self.velocity == 0 then
+		self:setAnimationSequence("idle")
 	end
 
 	--apply friction
-	if self.velocity.x ~= 0 then
-		self.velocity.x = self.velocity.x - (self.friction * GameMath.sign(self.velocity.x))
-		self.quadTreeX = math.floor(self.position.x / 64) --fake quadtree
-	end
-	if self.velocity.y ~= 0 then
-		self.velocity.y = self.velocity.y - (self.friction * GameMath.sign(self.velocity.y))
-		self.quadTreeY = math.floor(self.position.y / 64) --fake quadtree
+
+	if self.velocity > 0 then
+		self.velocity = self.velocity - self.friction
+		self.quadTreeX = math.floor(self.position.x / 64)
+		self.quadTreeY = math.floor(self.position.y / 64)
 	end
 
+	local xx, yy = 0, 0
+
+	if self.direction == Game.direction.up then
+		yy = self.velocity * -1
+	elseif self.direction == Game.direction.down then
+		yy = self.velocity
+	elseif self.direction == Game.direction.left then
+		xx = self.velocity * -1
+	elseif self.direction == Game.direction.right then
+		xx = self.velocity
+	end
+
+	self.position.x = self.position.x + xx
+	self.position.y = self.position.y + yy
+
+	while objectManager_:isColliding(self, self.solidGroup) do
+		self.position.x = self.position.x - xx
+		self.position.y = self.position.y - yy
+	end
+
+	--[[
 	--apply velocity
 	self.position.x = math.floor(self.position.x + self.velocity.x)
 	--correct movement if collision with any object of the solidGroup
@@ -180,5 +207,5 @@ function Object:update(objectManager_)
 		while objectManager_:isColliding(self, self.solidGroup) do
 			self.position.y = math.floor(self.position.y - GameMath.sign(self.velocity.y))
 		end
-	end
+	end--]]
 end

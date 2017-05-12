@@ -39,6 +39,10 @@ function checkKeyboard()
 	end
 end
 
+function love.keyreleased(key_)
+	Game.keyReleased(key_)
+end
+
 function love.mousepressed(x, y, button, istouch)
 	Game.mousePress(x, y, button, istouch)
 end
