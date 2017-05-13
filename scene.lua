@@ -25,6 +25,7 @@ end
 
 function Scene:mousePress(x_, y_, button_, istouch_)
   self.interfaceManager:onClick(x_, y_, button_, istouch_, self.camera)
+  self.objectManager:onClick(x_, y_, button_, isTouch_, self.camera)
 end
 
 function Scene:update(time_)

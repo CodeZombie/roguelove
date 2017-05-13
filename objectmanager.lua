@@ -53,6 +53,12 @@ function ObjectManager:keyReleased(key_)
 	end
 end
 
+function ObjectManager:onClick(x_, y_, button_, isTouch_, camera_)
+	for n=1, self.numberOfObjects do
+		self.objects[n]:onClick(x_, y_, button_, isTouch_, camera_)
+	end
+end
+
 function ObjectManager:addObject(object_)
 	self.idCounter = self.idCounter + 1
 	table.insert(self.objects, object_)

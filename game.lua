@@ -1,5 +1,6 @@
 Game = {
   direction = { up = 1, right = 2, down = 3, left = 4},
+  debug = true,
   currentScene = nil,
   timeTicker = 1,
   loopTime = 60
@@ -21,6 +22,12 @@ function Game.loadResources()
   end
 
   SpritesheetManager.newSpritesheet("images/map_dungeon.png", 16)
+end
+
+function Game.logError(msg_)
+  if Game.debug == true then
+    print("ERROR: " .. msg_)
+  end
 end
 
 function Game.init()
@@ -62,6 +69,6 @@ function Game.draw()
   Game.currentScene:draw()
 end
 
-function Game.deinit()
+function Game.quit()
   print("de-initializing game...")
 end

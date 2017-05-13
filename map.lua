@@ -171,10 +171,19 @@ function Map:__init(w_, h_, minRooms_, maxRooms_) 	-- minRooms, maxRooms, minRoo
 	for y = 1, self.mapHeight do
 		for x = 1, self.mapWidth do
 			if self.mapData[y][x] == 0 then --floor
-				self.mapDrawData[y][x] = 20
+				self.mapDrawData[y][x] = 19
+
+				if love.math.random() > .9 then
+					self.mapDrawData[y][x] = 20
+				end
+
+				if love.math.random() > .9 then
+					self.mapDrawData[y][x] = 21
+				end
+
 
 				if self.mapData[y-1] ~= nil and self.mapData[y-1][x] == 1 then --theres a wall above
-					self.mapDrawData[y][x] = 18
+					self.mapDrawData[y][x] = 17
 				end
 				if self.mapData[y][x-1] ~= nil and self.mapData[y][x-1] == 1 then --theres a wall left
 					self.mapDrawData[y][x] = 10
@@ -184,11 +193,16 @@ function Map:__init(w_, h_, minRooms_, maxRooms_) 	-- minRooms, maxRooms, minRoo
 				end
 
 				if self.mapData[y-1] ~= nil and self.mapData[y-1][x] == 1 and self.mapData[y][x-1] ~= nil and self.mapData[y][x-1] == 1 then --wall left and above
-					self.mapDrawData[y][x] = 19
+					self.mapDrawData[y][x] = 18
 				end
 
 				if self.mapData[y-1] ~= nil and self.mapData[y-1][x] == 1 and self.mapData[y][x+1] ~= nil and self.mapData[y][x+1] == 1 then --wall right and above
-					self.mapDrawData[y][x] = 17
+					self.mapDrawData[y][x] = 16
+				end
+
+				--below and left
+				if self.mapData[y][x+1] == 1 and self.mapData[y][x-1] == 1 then
+					self.mapDrawData[y][x] = 12
 				end
 
 			elseif self.mapData[y][x] == 1 then --wall

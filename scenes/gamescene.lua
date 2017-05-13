@@ -6,26 +6,27 @@ function GameScene:__init()
 	self.super.__init(self)
 
 	--generate map:
-	self.map = Map:new(128, 128, 20, 25)
+	self.map = Map:new(128, 128, 5, 6)
 	self.map:setSpritesheet("images/map_dungeon.png")
 
 	--find a random room to spawn our player:
 	local playerRoom = self.map:getRooms()[math.floor(love.math.random() * table.getn(self.map:getRooms()))]
 
-	local player = self.objectManager:addObject(Player:new((playerRoom.x + math.floor(love.math.random() * playerRoom.width))*16, (playerRoom.y + math.floor(love.math.random() * playerRoom.height))*16))
+	--local player = self.objectManager:addObject(Player:new((playerRoom.x + math.floor(love.math.random() * playerRoom.width))*16, (playerRoom.y + math.floor(love.math.random() * playerRoom.height))*16))
+	local player = self.objectManager:addObject(Player:new(0, 0))
 	player:setSpritesheet("images/man.png")
 	player:setAnimationSequence("blank_idle")
 	self.camera:setObjectToFollow(player)
 
 
 	--fill objectManager up with NPCS:
-	for n=1, 128 do
-		--local npc = self.objectManager:addObject(NPC:new(64,64))
+	for n=1, 4 do
 		--local npc = self.objectManager:addObject(NPC:new(16 * math.floor((love.math.random()*(self.mapWidth))/16), 16 * math.floor((love.math.random()*(self.mapWidth))/16)))
-		--npc:setSpritesheet("images/slime.png")
-		--npc:setAnimationSequence("idle")
-		--npc:setSpriteIndex(math.ceil(love.math.random()*128))
+		local npc = self.objectManager:addObject(NPC:new(16,16))
+		npc:setSpritesheet("images/slime.png")
+		npc:setAnimationSequence("idle")
 	end
+
 
 	--fill objectManager up with walls:
 	--for n=1, 128 do

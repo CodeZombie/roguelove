@@ -62,6 +62,9 @@ end
 function Object:keyReleased(key_)
 end
 
+function Object:onClick(x_, y_, button_, isTouch_, camera_)
+end
+
 function Object:onCollision(other_)
 end
 
@@ -80,27 +83,16 @@ function Object:checkCollision(other_)
 	return false
 end
 
-function Object:addVelocity(direction_, speed_)
+function Object:setDirection(direction_)
+	self.direction = direction_
+end
+
+function Object:addVelocity(speed_)
 	self.velocity = self.velocity + speed_
 
 	if self.velocity > self.maxVelocity then
 		self.velocity = self.maxVelocity
 	end
-
-	self.direction = direction_
-
- --[[
-	if math.abs(self.velocity.x) < math.abs(self.maxVelocity.x) then
-		self.velocity.x = self.velocity.x + x_
-	else
-		self.velocity.x = self.maxVelocity.x * GameMath.sign(self.velocity.x)
-	end
-
-	if math.abs(self.velocity.y) < math.abs(self.maxVelocity.y) then
-		self.velocity.y = self.velocity.y + y_
-	else
-		self.velocity.y = self.maxVelocity.y * GameMath.sign(self.velocity.y)
-	end--]]
 end
 
 function Object:draw(camera_)
@@ -188,8 +180,13 @@ function Object:update(objectManager_)
 	self.position.y = self.position.y + yy
 
 	while objectManager_:isColliding(self, self.solidGroup) do
-		self.position.x = self.position.x - xx
-		self.position.y = self.position.y - yy
+		if xx == 0 and yy == 0 then --if we have no implied direction to move in
+			--FIXME: be a little smarter than this. This fix sucks:
+			self.position.x = self.position.x - 1 --move left until we're outta the way
+		else
+			self.position.x = self.position.x - xx
+			self.position.y = self.position.y - yy
+		end
 	end
 
 	--[[
