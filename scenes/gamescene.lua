@@ -6,33 +6,30 @@ function GameScene:__init()
 	self.super.__init(self)
 
 	--generate map:
-	self.map = Map:new(128, 128, 5, 6)
+	self.map = Map:new(32, 64, 5, 6)
 	self.map:setSpritesheet("images/map_dungeon.png")
 
 	--find a random room to spawn our player:
-	local playerRoom = self.map:getRooms()[math.floor(love.math.random() * table.getn(self.map:getRooms()))]
+	local playerRoom = self.map:getRooms()[1]
 
-	--local player = self.objectManager:addObject(Player:new((playerRoom.x + math.floor(love.math.random() * playerRoom.width))*16, (playerRoom.y + math.floor(love.math.random() * playerRoom.height))*16))
-	local player = self.objectManager:addObject(Player:new(0, 0))
-	player:setSpritesheet("images/man.png")
-	player:setAnimationSequence("blank_idle")
+	local player = self.objectManager:addObject(Player:new((playerRoom.x + math.floor(love.math.random() * playerRoom.width))*16, (playerRoom.y + math.floor(love.math.random() * playerRoom.height))*16))
+	--local player = self.objectManager:addObject(Player:new(0, 0))
 	self.camera:setObjectToFollow(player)
 
 
 	--fill objectManager up with NPCS:
-	for n=1, 4 do
+	for n=1, 128 do
 		--local npc = self.objectManager:addObject(NPC:new(16 * math.floor((love.math.random()*(self.mapWidth))/16), 16 * math.floor((love.math.random()*(self.mapWidth))/16)))
-		local npc = self.objectManager:addObject(NPC:new(16,16))
+		local npc = self.objectManager:addObject(NPC:new(love.math.random()*256,love.math.random()*256))
 		npc:setSpritesheet("images/slime.png")
 		npc:setAnimationSequence("idle")
 	end
 
 
 	--fill objectManager up with walls:
-	--for n=1, 128 do
-	--	local wall = self.objectManager:addObject(Wall:new(16 * math.floor((love.math.random()*self.mapWidth)/16), 16 * math.floor((love.math.random()*self.mapWidth)/16)))
-		--	wall:setSpritesheet("images/spritesheet.png")
-	--end
+	for n=1, 128 do
+		local wall = self.objectManager:addObject(Wall:new(16 * math.floor((love.math.random()*self.mapWidth)/16), 16 * math.floor((love.math.random()*self.mapWidth)/16)))
+		end
 
 
 	local healthbar = self.interfaceManager:addInterface(InterfaceContainer:new(player, "relative", 0, -.2, "relative", 1, .2))
@@ -46,11 +43,20 @@ function GameScene:__init()
 	fuckTwo:setClickable(true)
 end
 
-function GameScene:keyPress(key)
-	self.super.keyPress(self,key)
-	if key == "escape" then
+function GameScene:keyPress(key_)
+	self.super.keyPress(self,key_)
+	if key_ == "escape" then
 		love.event.push('quit')
 	end
+
+	if key_ == "o" then
+		self.camera.zoomLevel = self.camera.zoomLevel - .1
+	end
+
+	if key_ == "p" then
+		self.camera.zoomLevel = self.camera.zoomLevel + .1
+	end
+
 end
 
 function GameScene:mousePress(x_, y_, button_, istouch_)

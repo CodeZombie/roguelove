@@ -1,4 +1,4 @@
-NPC = Object:extends{
+NPC = Actor:extends{
 	dead = false,
 	objectType = "game_npc",
 	solidGroup = {"game_wall", "game_player", "game_npc"},

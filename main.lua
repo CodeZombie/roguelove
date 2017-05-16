@@ -13,6 +13,7 @@ require 'interfaceobject'
 require 'interfacecontainer'
 
 require 'object'
+require 'objects/actor'
 require 'objects/npc'
 require 'objects/player'
 require 'objects/wall'
@@ -37,6 +38,10 @@ function tableContains(table_, element_)
 		end
 	end
 	return false
+end
+
+function love.resize(w_, h_)
+	Game.resize(w_, h_)
 end
 
 function checkKeyboard()

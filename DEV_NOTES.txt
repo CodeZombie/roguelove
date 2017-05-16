@@ -23,11 +23,6 @@ May 2017:
 		Make Game.lua a class, so that it can be extended by a myGame.lua class to truly separate the game specific stuff from the engine specific stuff.
 		[[[[[ NOTE: This might be going overboard with the OOP stuff, but I think its useful so lets roll with it.]]]]]
 
-		Make collision box separate from the actual sprite. For example, the collision box should only be the legs/feet of a humanoid, so the head and torso can pass by
-		other objects, emulating height.
-
-		ALSO: y-sort shit so that it draws in the correct order!!
-
 		The absolute most important thing: 	Redo the map thing entirely, and for the love of god, have it generate a static map image.
 																				Drawing the map tile by tile takes us from less than 1% cpu usage to 30% cpu usage. Absolutely fucking crazy.
 		MOST IMPORTANT:::: Maybe re-introduce diagonal moving, but have it handled much more explictly than it was before. Control is good :^)

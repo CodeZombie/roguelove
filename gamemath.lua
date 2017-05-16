@@ -12,9 +12,11 @@ function GameMath.pointInTriangle(point, tri1, tri2, tri3)
 	return ((b1 == b2) and (b2 == b3))
 end
 
-function GameMath.round(num, idp)
-  local mult = 10^(idp or 0)
-  return math.floor(num * mult + 0.5) / mult
+function GameMath.round(x)
+  if x%2 ~= 0.5 then
+    return math.floor(x+0.5)
+  end
+  return x-0.5
 end
 
 function GameMath.sign(x_)

@@ -77,6 +77,9 @@ function ObjectManager:update()
 	for n=1, self.numberOfObjects do
 		self.objects[n]:update(self)
 	end
+
+	--y-sorting:
+	table.sort( self.objects, function( a, b ) return (a.position.y + a.size.h) < (b.position.y + b.size.h) end)
 end
 
 function ObjectManager:draw(camera_)

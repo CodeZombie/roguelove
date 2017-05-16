@@ -1,25 +1,23 @@
 Object = class{
 	id = 0,
 	position = {x=0, y=0},
+	size = {w=16, h=16},
+	--visible position/size
+	--collisionbox position.size
+	collisionbox = {x = 0, y = 0, w = 16, h = 16},
 	solidGroup = {}, --the group of things to collide with
 	friction = .5,
 	objectType = "gameobject",
-	reactsToCollision = false, --NOTE NOTE NOTE: I'm fairly sure this property doesnt do anything. Look into removing it.
 	spritesheet = nil, --ID'd by filename
 	animationSequence = nil, --formerly AnimationState --string representing the spritesheet's animation states. If nil, we do not animate, and spriteIndex remains static
 	animationFrame = 1, --keeps track of which frame we're on inside the animation
-	size = {w=16, h=16},
-	quadTreeX = 0, --used to partition all objects into squares for checking collisions
-	quadTreeY = 0,
 	direction = Game.direction.up,
 	velocity = 0,
-	maxVelocity = 2.5
+	maxVelocity = 3
 }
 
 function Object:__init(x_, y_)
 	self.position.x, self.position.y = x_, y_
-	self.quadTreeX = math.floor(self.position.x / 64) --fake quadtree
-	self.quadTreeY = math.floor(self.position.y / 64) --fake quadtree
 end
 
 function Object:setObjectType(t_)
@@ -38,6 +36,10 @@ function Object:setAnimationSequence(sequence_)
 
 	if self.spritesheet == nil then
 		--print("Error: Attempting to apply animation sequence to object that has no spritesheet")
+		return
+	end
+
+	if SpritesheetManager.spritesheets[self.spritesheet] == nil then
 		return
 	end
 
@@ -69,18 +71,14 @@ function Object:onCollision(other_)
 end
 
 function Object:checkCollision(other_)
-	if other_.quadTreeX >= self.quadTreeX - 1 and other_.quadTreeX <= self.quadTreeX + 1 then
-		if other_.quadTreeY >= self.quadTreeY - 1 and other_.quadTreeY <= self.quadTreeY + 1 then
-			if 	self.position.x < other_.position.x + other_.size.w and
-				self.position.x + self.size.w > other_.position.x and
-				self.position.y < other_.position.y + other_.size.h and
-				self.position.y + self.size.h > other_.position.y then
-					self:onCollision(other_)
-					return true
-				end
-			end
+	if (self.position.x + self.collisionbox.x) < (other_.position.x + other_.collisionbox.x) + other_.collisionbox.w and
+		 (self.position.x + self.collisionbox.x) + self.collisionbox.w > (other_.position.x + other_.collisionbox.x) and
+		 (self.position.y + self.collisionbox.y) < (other_.position.y + other_.collisionbox.y) + other_.collisionbox.h and
+		 (self.position.y + self.collisionbox.y) + self.collisionbox.h > (other_.position.y + other_.collisionbox.y) then
+			self:onCollision(other_)
+			return true
 		end
-	return false
+return false
 end
 
 function Object:setDirection(direction_)
@@ -123,7 +121,9 @@ function Object:updateAnimation(time_)
 		return
 	end
 
-	if SpritesheetManager.spritesheets[self.spritesheet].animationSequences[self.animationSequence].framerate == 0 then -- the framerate is 0, indicating no animation necessary
+
+	if SpritesheetManager.spritesheets[self.spritesheet].animationSequences[self.animationSequence].framerate == nil or
+	 	 SpritesheetManager.spritesheets[self.spritesheet].animationSequences[self.animationSequence].framerate == 0 then -- the framerate is 0, indicating no animation necessary
 		return
 	end
 
@@ -141,52 +141,43 @@ end
 
 function Object:update(objectManager_)
 
-	--update movement animation:
-	if self.direction == Game.direction.down then
-		self:setAnimationSequence("walk_down")
-	elseif self.direction == Game.direction.up then
-		self:setAnimationSequence("walk_up")
-	elseif self.direction == Game.direction.right then
-		self:setAnimationSequence("walk_right")
-	elseif self.direction == Game.direction.left then
-		self:setAnimationSequence("walk_left")
-	end
-
-	if self.velocity == 0 then
-		self:setAnimationSequence("idle")
-	end
-
 	--apply friction
-
 	if self.velocity > 0 then
 		self.velocity = self.velocity - self.friction
-		self.quadTreeX = math.floor(self.position.x / 64)
-		self.quadTreeY = math.floor(self.position.y / 64)
 	end
 
 	local xx, yy = 0, 0
 
-	if self.direction == Game.direction.up then
+	if self.direction == Game.direction.up or self.direction == Game.direction.upleft or self.direction == Game.direction.upright then
 		yy = self.velocity * -1
-	elseif self.direction == Game.direction.down then
+	end
+	if self.direction == Game.direction.down or self.direction == Game.direction.downleft or self.direction == Game.direction.downright  then
 		yy = self.velocity
-	elseif self.direction == Game.direction.left then
+	end
+	if self.direction == Game.direction.left or self.direction == Game.direction.upleft or self.direction == Game.direction.downleft  then
 		xx = self.velocity * -1
-	elseif self.direction == Game.direction.right then
+	end
+	if self.direction == Game.direction.right or self.direction == Game.direction.upright or self.direction == Game.direction.downright  then
 		xx = self.velocity
 	end
 
-	self.position.x = self.position.x + xx
-	self.position.y = self.position.y + yy
+	self.position.x = GameMath.round(self.position.x + xx)
+	self.position.y = GameMath.round(self.position.y + yy)
 
 	while objectManager_:isColliding(self, self.solidGroup) do
 		if xx == 0 and yy == 0 then --if we have no implied direction to move in
 			--FIXME: be a little smarter than this. This fix sucks:
 			self.position.x = self.position.x - 1 --move left until we're outta the way
 		else
-			self.position.x = self.position.x - xx
-			self.position.y = self.position.y - yy
+			if xx ~= 0 then
+				self.position.x = self.position.x - GameMath.sign(xx)-- *.5
+			end
+			if yy ~= 0 then
+				self.position.y = self.position.y - GameMath.sign(yy)-- * .5
+			end
 		end
+
+
 	end
 
 	--[[

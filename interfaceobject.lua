@@ -40,8 +40,8 @@ function InterfaceObject:getAbsolutePosition(camera_)
       parentPos = self.parent:getAbsolutePosition(camera_)
       parentSize = self.parent:getAbsoluteSize(camera_)
     else
-      parentPos = {x = (self.parent.position.x - camera_.position.x) * Graphics.drawScale, y = (self.parent.position.y - camera_.position.y) * Graphics.drawScale}
-      parentSize = {w = self.parent.size.w * Graphics.drawScale, h = self.parent.size.h * Graphics.drawScale}
+      parentPos = {x = (self.parent.position.x - camera_.position.x) * camera_.zoomLevel, y = (self.parent.position.y - camera_.position.y) * camera_.zoomLevel}
+      parentSize = {w = self.parent.size.w * camera_.zoomLevel, h = self.parent.size.h * camera_.zoomLevel}
     end
   end
 
@@ -60,7 +60,7 @@ function InterfaceObject:getAbsoluteSize(camera_)
     if self.parent.type == "interfaceobject" then
       parentSize = self.parent:getAbsoluteSize(camera_)
     else
-      parentSize = {w = self.parent.size.w * Graphics.drawScale, h = self.parent.size.h * Graphics.drawScale}
+      parentSize = {w = self.parent.size.w * camera_.zoomLevel, h = self.parent.size.h * camera_.zoomLevel}
     end
   end
 
