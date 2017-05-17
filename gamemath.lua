@@ -12,11 +12,15 @@ function GameMath.pointInTriangle(point, tri1, tri2, tri3)
 	return ((b1 == b2) and (b2 == b3))
 end
 
+function GameMath.roundToDecimal(x_, n_)
+	return GameMath.round(x_ * math.pow(10, n_)) * math.pow(0.1, n_)
+end
+
 function GameMath.round(x)
-  if x%2 ~= 0.5 then
+--  if x%2 ~= 0.5 then
     return math.floor(x+0.5)
-  end
-  return x-0.5
+--  end
+--  return x-0.5
 end
 
 function GameMath.sign(x_)

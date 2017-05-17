@@ -19,6 +19,8 @@ May 2017:
 	Many other small changes.
 
 	todo:
+		
+		optimize the y-sorting, so that objects only resort when they move.
 
 		Make Game.lua a class, so that it can be extended by a myGame.lua class to truly separate the game specific stuff from the engine specific stuff.
 		[[[[[ NOTE: This might be going overboard with the OOP stuff, but I think its useful so lets roll with it.]]]]]

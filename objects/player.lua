@@ -15,44 +15,13 @@ function Player:keyPress(key_)
 	Player.super.keyPress(self, key_)
 
 	if key_ == "w" then
-		if love.keyboard.isDown("d") then
-			self:setDirection(Game.direction.upright)
-		elseif love.keyboard.isDown("a") then
-			self:setDirection(Game.direction.upleft)
-		else
-			self:setDirection(Game.direction.up)
-		end
-		self:addVelocity(1)
-
+		self:addVelocity(nil, -self.acceleration.y)
 	elseif key_ == "s" then
-		if love.keyboard.isDown("d") then
-			self:setDirection(Game.direction.downright)
-		elseif love.keyboard.isDown("a") then
-			self:setDirection(Game.direction.downleft)
-		else
-			self:setDirection(Game.direction.down)
-		end
-		self:addVelocity(1)
-
+		self:addVelocity(nil, self.acceleration.y)
 	elseif key_ == "a" then
-		if love.keyboard.isDown("w") then
-			self:setDirection(Game.direction.upleft)
-		elseif love.keyboard.isDown("s") then
-			self:setDirection(Game.direction.downleft)
-		else
-			self:setDirection(Game.direction.left)
-		end
-		self:addVelocity(1)
-
+		self:addVelocity(-self.acceleration.x, nil)
 	elseif key_ == "d" then
-		if love.keyboard.isDown("w") then
-			self:setDirection(Game.direction.upright)
-		elseif love.keyboard.isDown("s") then
-			self:setDirection(Game.direction.downright)
-		else
-			self:setDirection(Game.direction.right)
-		end
-		self:addVelocity(1)
+		self:addVelocity(self.acceleration.x, nil)
 	end
 
 	if key_ == "r" then
@@ -69,17 +38,13 @@ function Player:onClick(x_, y_, button_, map_, camera_)
 
 		--check which triangle the mouse is in...
 		if GameMath.pointInTriangle({x=x_,y=y_}, {x = 0, y = 0}, {x = Graphics.windowWidth, y = 0}, {x = centerX, y = centerY}) then
-			self:setDirection(Game.direction.up)
-			self:addVelocity(1)
+			--up
 		elseif GameMath.pointInTriangle({x=x_,y=y_}, {x = 0, y = Graphics.windowHeight}, {x = Graphics.windowWidth, y = Graphics.windowHeight}, {x = centerX, y = centerY}) then
-			self:setDirection(Game.direction.down)
-			self:addVelocity(1)
+			--down
 		elseif GameMath.pointInTriangle({x=x_,y=y_}, {x = 0, y = 0}, {x = 0, y = Graphics.windowHeight}, {x = centerX, y = centerY}) then
-			self:setDirection(Game.direction.left)
-			self:addVelocity(1)
+			--left
 		elseif GameMath.pointInTriangle({x=x_,y=y_}, {x = Graphics.windowWidth, y = 0}, {x = Graphics.windowWidth, y = Graphics.windowHeight}, {x = centerX, y = centerY}) then
-			self:setDirection(Game.direction.right)
-			self:addVelocity(1)
+			--right
 		end
 	end
 end
@@ -90,4 +55,6 @@ end
 
 function Player:draw(camera_)
 	Player.super.draw(self, camera_)
+	love.graphics.print("vel.x: " .. tostring(self.velocity.x), 16, 16)
+	love.graphics.print("vel.y: " .. tostring(self.velocity.y), 16, 32)
 end

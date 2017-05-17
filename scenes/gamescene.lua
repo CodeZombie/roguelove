@@ -18,7 +18,7 @@ function GameScene:__init()
 
 
 	--fill objectManager up with NPCS:
-	for n=1, 128 do
+	for n=1, 4 do
 		--local npc = self.objectManager:addObject(NPC:new(16 * math.floor((love.math.random()*(self.mapWidth))/16), 16 * math.floor((love.math.random()*(self.mapWidth))/16)))
 		local npc = self.objectManager:addObject(NPC:new(love.math.random()*256,love.math.random()*256))
 		npc:setSpritesheet("images/slime.png")
@@ -68,7 +68,7 @@ function GameScene:update(time_)
 end
 
 function GameScene:draw()
-	self.map:draw(self.camera)
+	--self.map:draw(self.camera)
 
 	self.super.draw(self)
 	love.graphics.print("DUNGEON - LEVEL 1", 256+48, 48)
