@@ -15,13 +15,13 @@ function Player:keyPress(key_)
 	Player.super.keyPress(self, key_)
 
 	if key_ == "w" then
-		self:addVelocity(nil, -self.acceleration.y)
+		self:addVelocity(nil, -1)
 	elseif key_ == "s" then
-		self:addVelocity(nil, self.acceleration.y)
+		self:addVelocity(nil, 1)
 	elseif key_ == "a" then
-		self:addVelocity(-self.acceleration.x, nil)
+		self:addVelocity(-1, nil)
 	elseif key_ == "d" then
-		self:addVelocity(self.acceleration.x, nil)
+		self:addVelocity(1, nil)
 	end
 
 	if key_ == "r" then

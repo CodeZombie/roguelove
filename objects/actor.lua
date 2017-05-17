@@ -7,19 +7,25 @@ Actor = Object:extends{
 
 function Actor:update(objectManager_)
   Actor.super.update(self, objectManager_)
-
-  --update movement animation:
-  if self.direction == Game.direction.down then
-    self:setAnimationSequence("walk_down")
-  elseif self.direction == Game.direction.up then
-    self:setAnimationSequence("walk_up")
-  elseif self.direction == Game.direction.right then
+  if self.velocity.x > 0 and self.velocity.y == 0 then
     self:setAnimationSequence("walk_right")
-  elseif self.direction == Game.direction.left then
+  elseif self.velocity.x > 0 and self.velocity.y > 0 then
+    self:setAnimationSequence("walk_downright")
+  elseif self.velocity.x > 0 and self.velocity.y < 0 then
+    self:setAnimationSequence("walk_upright")
+  elseif self.velocity.x < 0 and self.velocity.y == 0 then
     self:setAnimationSequence("walk_left")
+  elseif self.velocity.x < 0 and self.velocity.y > 0 then
+    self:setAnimationSequence("walk_downleft")
+  elseif self.velocity.x < 0 and self.velocity.y < 0 then
+    self:setAnimationSequence("walk_upleft")
+  elseif self.velocity.x == 0 and self.velocity.y < 0 then
+    self:setAnimationSequence("walk_up")
+  elseif self.velocity.x == 0 and self.velocity.y > 0 then
+    self:setAnimationSequence("walk_down")
   end
 
-  if self.velocity == 0 then
+  if self.velocity.x == 0 and self.velocity.y == 0 then
     self:setAnimationSequence("idle")
   end
 end

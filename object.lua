@@ -2,19 +2,18 @@ Object = class{
 	id = 0,
 	position = {x=0, y=0},
 	size = {w=16, h=16},
-	acceleration = {x=.75, y=.75},
 	velocity = {x=0, y=0},
-	maxVelocity = {x=3, y=3},
-	friction = .3, --between 0 and 1. 0 == no friction, 1 == totally immovable
+	maxVelocity = {x=2, y=2},
+	friction = .5, --between 0 and 1. 0 == no friction, 1 == totally immovable
 	collisionbox = {x = 0, y = 0, w = 16, h = 16},
 	solidGroup = {}, --the group of things to collide with
 	objectType = "gameobject",
 	spritesheet = nil, --ID'd by filename
 	animationSequence = nil, --formerly AnimationState --string representing the spritesheet's animation states. If nil, we do not animate, and spriteIndex remains static
-	animationFrame = 1 --keeps track of which frame we're on inside the animation
-	--direction = Game.direction.up,
-	--velocity = 0,
-	--maxVelocity = 3
+	animationFrame = 1, --keeps track of which frame we're on inside the animation
+	private = { --TODO: organize members by public and private.
+		relativeFriction = {x = 0, y = 0}
+	}
 }
 
 function Object:__init(x_, y_)
@@ -85,12 +84,13 @@ end
 function Object:addVelocity(x_, y_)
 
 	if x_ ~= nil then
+		--self.private.acceleration.x = math.abs(x_)
+		self.private.relativeFriction.x = math.abs(x_) * self.friction
 		self.velocity.x = self.velocity.x + x_
-		--self.velocity.x = math.min(math.abs(self.velocity.x + (x_ * self.acceleration.x)), self.maxVelocity.x) * GameMath.sign(self.velocity.x + (x_ * self.acceleration.x))
 	end
 	if y_ ~= nil then
+		self.private.relativeFriction.y = math.abs(y_) * self.friction
 		self.velocity.y = self.velocity.y + y_
-		--self.velocity.y = math.min(math.abs(self.velocity.y + (y_ * self.acceleration.y)), self.maxVelocity.y) * GameMath.sign(self.velocity.y + (y_ * self.acceleration.y))
 	end
 end
 
@@ -146,21 +146,21 @@ function Object:update(objectManager_)
 	if self.velocity.x ~= 0 or self.velocity.y ~= 0 then
 
 		--make sure velocity doesn't float around 0:
-		if math.abs(self.velocity.x) <= (self.friction * self.acceleration.x) then
+		if math.abs(self.velocity.x) <= self.private.relativeFriction.x then
 			self.velocity.x = 0
 			self.position.x = GameMath.round(self.position.x)
 		end
-		if math.abs(self.velocity.y) <= (self.friction * self.acceleration.y) then
+		if math.abs(self.velocity.y) <= self.private.relativeFriction.y then
 			self.velocity.y = 0
 			self.position.y = GameMath.round(self.position.y)
 		end
 
 		--friction
 		if self.velocity.x ~= 0 then
-			self.velocity.x = self.velocity.x - (GameMath.sign(self.velocity.x) * (self.friction * self.acceleration.x))
+			self.velocity.x = self.velocity.x - (GameMath.sign(self.velocity.x) * self.private.relativeFriction.x)
 		end
 		if self.velocity.y ~= 0 then
-			self.velocity.y = self.velocity.y - (GameMath.sign(self.velocity.y) * (self.friction * self.acceleration.y))
+			self.velocity.y = self.velocity.y - (GameMath.sign(self.velocity.y) * self.private.relativeFriction.y)
 		end
 
 		--make sure velocity doesn't go above maxVelocity
