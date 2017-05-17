@@ -4,11 +4,10 @@ Object = class{
 	size = {w=16, h=16},
 	acceleration = {x=.75, y=.75},
 	velocity = {x=0, y=0},
-	maxVelocity = {x=2, y=2},
-
+	maxVelocity = {x=3, y=3},
+	friction = .3, --between 0 and 1. 0 == no friction, 1 == totally immovable
 	collisionbox = {x = 0, y = 0, w = 16, h = 16},
 	solidGroup = {}, --the group of things to collide with
-	friction = .6, --between 0 and 1. 0 == no friction, 1 == totally immovable
 	objectType = "gameobject",
 	spritesheet = nil, --ID'd by filename
 	animationSequence = nil, --formerly AnimationState --string representing the spritesheet's animation states. If nil, we do not animate, and spriteIndex remains static
@@ -84,11 +83,14 @@ return false
 end
 
 function Object:addVelocity(x_, y_)
+
 	if x_ ~= nil then
-		self.velocity.x = math.min(math.abs(self.velocity.x + (x_ * self.acceleration.x)), self.maxVelocity.x) * GameMath.sign(self.velocity.x + (x_ * self.acceleration.x))
+		self.velocity.x = self.velocity.x + x_
+		--self.velocity.x = math.min(math.abs(self.velocity.x + (x_ * self.acceleration.x)), self.maxVelocity.x) * GameMath.sign(self.velocity.x + (x_ * self.acceleration.x))
 	end
 	if y_ ~= nil then
-		self.velocity.y = math.min(math.abs(self.velocity.y + (y_ * self.acceleration.y)), self.maxVelocity.y) * GameMath.sign(self.velocity.y + (y_ * self.acceleration.y))
+		self.velocity.y = self.velocity.y + y_
+		--self.velocity.y = math.min(math.abs(self.velocity.y + (y_ * self.acceleration.y)), self.maxVelocity.y) * GameMath.sign(self.velocity.y + (y_ * self.acceleration.y))
 	end
 end
 
@@ -140,14 +142,15 @@ end
 
 function Object:update(objectManager_)
 
+
 	if self.velocity.x ~= 0 or self.velocity.y ~= 0 then
 
-		if math.abs(self.velocity.x) < (self.friction * self.acceleration.x) then
+		--make sure velocity doesn't float around 0:
+		if math.abs(self.velocity.x) <= (self.friction * self.acceleration.x) then
 			self.velocity.x = 0
 			self.position.x = GameMath.round(self.position.x)
 		end
-
-		if math.abs(self.velocity.y) < (self.friction * self.acceleration.y) then
+		if math.abs(self.velocity.y) <= (self.friction * self.acceleration.y) then
 			self.velocity.y = 0
 			self.position.y = GameMath.round(self.position.y)
 		end
@@ -160,6 +163,13 @@ function Object:update(objectManager_)
 			self.velocity.y = self.velocity.y - (GameMath.sign(self.velocity.y) * (self.friction * self.acceleration.y))
 		end
 
+		--make sure velocity doesn't go above maxVelocity
+		if math.abs(self.velocity.x) > self.maxVelocity.x then
+			self.velocity.x = GameMath.sign(self.velocity.x) * self.maxVelocity.x
+		end
+		if math.abs(self.velocity.y) > self.maxVelocity.y then
+			self.velocity.y = GameMath.sign(self.velocity.y) * self.maxVelocity.y
+		end
 
 		--apply movement & correct for collisions
 		self.position.x = GameMath.round(self.position.x + self.velocity.x)
@@ -167,7 +177,6 @@ function Object:update(objectManager_)
 			self.position.x = GameMath.round(self.position.x - GameMath.sign(self.velocity.x))
 			--self.velocity.y =  self.velocity.y * (1 - (self.friction/8)) --add a bit of friction to our horizontal movement, slowing us down as we run into shit
 		end
-
 		self.position.y = GameMath.round(self.position.y + self.velocity.y)
 		while objectManager_:isColliding(self, self.solidGroup) do
 			self.position.y = GameMath.round(self.position.y - GameMath.sign(self.velocity.y))
