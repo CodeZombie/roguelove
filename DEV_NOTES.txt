@@ -51,3 +51,10 @@ May 2017:
 
 		allow objects a way to interact with interface objects safely (without strict coupling)
 		so for example, a healthbar interface object is created to represent the health of a specific NPC. that NPC will get the ID of that healthbar and will be able to send it commands like resize, etc.
+
+March 8th, 2018:
+	Fixed up the crappy rounded movement, and fixed the bouncing that was happening when the player hit walls, which is what the rounding hackishly fixed.
+	I should go through all the code and add detailed comments everywhere, to get a better idea of what my code is doing (becuase i havent touched this project in a year), and just because I need to do that anyway
+	Consider making a Drawable class to handle animated and static sprites. This way, if a non-object element, say, the interface, needs to draw an animated sprite, it can do so easily.
+	Go through and find things that are redundant.
+	Find all the TODOs and actually start working on them.

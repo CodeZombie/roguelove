@@ -33,6 +33,18 @@ function Game.loadResources()
   tp:addAnimationSequence({["walk_upleft"] = {frames = {8}, framerate = 0}})
   tp:addAnimationSequence({["dance"] = {frames = {1,2,3,4,5,6,7,8}, next="idle", framerate = 5}})
 
+  local femwar = SpritesheetManager.newSpritesheet("images/femwarrior.png", {w=16, h=32})
+  femwar:addAnimationSequence({["idle"] = {frames = {1}, framerate = 0}})
+  femwar:addAnimationSequence({["walk_down"] = {frames = {2, 3, 4, 5, 6, 7}, framerate = 5}})
+  femwar:addAnimationSequence({["walk_left"] = {frames = {9, 10, 11, 12, 13, 14}, framerate = 5}})
+  femwar:addAnimationSequence({["walk_up"] = {frames = {16, 17, 18, 19, 20, 21}, framerate = 5}})
+  femwar:addAnimationSequence({["walk_right"] = {frames = {23, 24, 25, 26, 27, 28}, framerate = 5}})
+
+  femwar:addAnimationSequence({["walk_downright"] = {frames = {23, 24, 25, 26, 27, 28}, framerate = 5}})
+  femwar:addAnimationSequence({["walk_downleft"] = {frames = {9, 10, 11, 12, 13, 14}, framerate = 5}})
+  femwar:addAnimationSequence({["walk_upright"] = {frames = {23, 24, 25, 26, 27, 28}, framerate = 5}})
+  femwar:addAnimationSequence({["walk_upleft"] = {frames = {9, 10, 11, 12, 13, 14}, framerate = 5}})
+
   SpritesheetManager.newSpritesheet("images/map_dungeon.png", {w=16, h=16})
   local mem = SpritesheetManager.newSpritesheet("images/spritesheet.png", {w=16, h=16})
   mem:addAnimationSequence({["wall"] = {frames = {22}}})

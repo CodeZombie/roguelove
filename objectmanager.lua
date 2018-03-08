@@ -6,13 +6,7 @@ ObjectManager = class{
 }
 
 function ObjectManager:__init()
-	self.NPCs = {}
 
-	--for n = 1, self.maxNPCs do
-	--	table.insert(self.NPCs, NPC:new(16,16))
-	--	self.NPCs[n]:setSpriteIndex(math.ceil(love.math.random()*128))
-	--	self.NPCs[n]:setObjectType("NPC")
-	--end
 end
 
 function ObjectManager:isColliding(object_, otherTypes_)

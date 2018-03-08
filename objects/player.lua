@@ -7,7 +7,7 @@ Player = Actor:extends{
 }
 function Player:__init(x,y)
 	Player.super.__init(self, x,y)
-	self:setSpritesheet("images/tallplayer.png")
+	self:setSpritesheet("images/femwarrior.png")
 	self:setAnimationSequence("idle")
 end
 
@@ -15,13 +15,13 @@ function Player:keyPress(key_)
 	Player.super.keyPress(self, key_)
 
 	if key_ == "w" then
-		self:addVelocity(nil, -1)
+		self:addVelocity(nil, -self.acceleration.y)
 	elseif key_ == "s" then
-		self:addVelocity(nil, 1)
+		self:addVelocity(nil, self.acceleration.y)
 	elseif key_ == "a" then
-		self:addVelocity(-1, nil)
+		self:addVelocity(-self.acceleration.x, nil)
 	elseif key_ == "d" then
-		self:addVelocity(1, nil)
+		self:addVelocity(self.acceleration.x, nil)
 	end
 
 	if key_ == "r" then
@@ -57,4 +57,6 @@ function Player:draw(camera_)
 	Player.super.draw(self, camera_)
 	love.graphics.print("vel.x: " .. tostring(self.velocity.x), 16, 16)
 	love.graphics.print("vel.y: " .. tostring(self.velocity.y), 16, 32)
+	love.graphics.print("pos.x: " .. tostring(self.position.x), 16, 48)
+	love.graphics.print("pos.y: " .. tostring(self.position.y), 16, 64)
 end

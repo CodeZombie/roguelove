@@ -3,7 +3,8 @@ Object = class{
 	position = {x=0, y=0},
 	size = {w=16, h=16},
 	velocity = {x=0, y=0},
-	maxVelocity = {x=2, y=2},
+	maxVelocity = {x=1.5, y=1.5},
+	acceleration = {x=.5, y=.5},
 	friction = .5, --between 0 and 1. 0 == no friction, 1 == totally immovable
 	collisionbox = {x = 0, y = 0, w = 16, h = 16},
 	solidGroup = {}, --the group of things to collide with
@@ -141,21 +142,19 @@ function Object:updateAnimation(time_)
 end
 
 function Object:update(objectManager_)
-
-
 	if self.velocity.x ~= 0 or self.velocity.y ~= 0 then
 
 		--make sure velocity doesn't float around 0:
 		if math.abs(self.velocity.x) <= self.private.relativeFriction.x then
 			self.velocity.x = 0
-			self.position.x = GameMath.round(self.position.x)
+			--self.position.x = GameMath.round(self.position.x)
 		end
 		if math.abs(self.velocity.y) <= self.private.relativeFriction.y then
 			self.velocity.y = 0
-			self.position.y = GameMath.round(self.position.y)
+			--self.position.y = GameMath.round(self.position.y)
 		end
 
-		--friction
+		--apply friction
 		if self.velocity.x ~= 0 then
 			self.velocity.x = self.velocity.x - (GameMath.sign(self.velocity.x) * self.private.relativeFriction.x)
 		end
@@ -172,21 +171,18 @@ function Object:update(objectManager_)
 		end
 
 		--apply movement & correct for collisions
-		self.position.x = GameMath.round(self.position.x + self.velocity.x)
-		while objectManager_:isColliding(self, self.solidGroup) do
-			self.position.x = GameMath.round(self.position.x - GameMath.sign(self.velocity.x))
-			--self.velocity.y =  self.velocity.y * (1 - (self.friction/8)) --add a bit of friction to our horizontal movement, slowing us down as we run into shit
-		end
-		self.position.y = GameMath.round(self.position.y + self.velocity.y)
-		while objectManager_:isColliding(self, self.solidGroup) do
-			self.position.y = GameMath.round(self.position.y - GameMath.sign(self.velocity.y))
-			--self.velocity.x =  self.velocity.x * (1 - (self.friction/8)) --add a bit of friction to our horizontal movement, slowing us down as we run into shit
+		self.position.x = self.position.x + self.velocity.x --apply the movement to the position on the x axis
+		while objectManager_:isColliding(self, self.solidGroup) do --while there is a collision
+			self.position.x = self.position.x - (GameMath.sign(self.velocity.x) * self.acceleration.x * .5) --step back half of one acceleartion unit until we are no longer colliding
 		end
 
+		self.position.y = self.position.y + self.velocity.y --same as above
+		while objectManager_:isColliding(self, self.solidGroup) do
+			self.position.y = self.position.y - (GameMath.sign(self.velocity.y) * self.acceleration.y * .5)
+		end
 	end
 
 	--TODO: each frame, precompute collisions and store them in a table for lookup later.
-
 
 	while objectManager_:isColliding(self, self.solidGroup) do
 		if self.velocity.x == 0 and self.velocity.y == 0 then --if we have no implied direction to move in
